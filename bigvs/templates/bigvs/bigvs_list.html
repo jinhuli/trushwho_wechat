@@ -1,0 +1,21 @@
+{% for obj in object_list.iterator %}
+<div class="weui_cell">
+    <div class="weui_cell_hd">
+        <img src="" alt="icon" style="">
+    </div>
+    <div class="weui_cell_bd weui_cell_primary">
+        <p class="cell_title">
+          {{ obj.name }}
+          <span>言值|{{ obj.words_weight }}</span>
+        </p>
+        <p class="cell_desc">{{ obj.brief }}</p>
+    </div>
+    <div class="weui_cell_ft">
+        {% if obj.id in follows_bigvs %}
+        <a href="javascript:;" class="weui_btn weui_btn_plain_default" title="{{ obj.id }}">已关注</a>
+        {% else %}
+        <a href="javascript:;" class="weui_btn weui_btn_plain_primary" title="{{ obj.id }}">+关注</a>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}

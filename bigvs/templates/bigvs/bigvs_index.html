@@ -1,0 +1,150 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+关注牛人
+{% endblock %}
+
+{% block content %}
+<div class="weui_tab">
+    <div class="weui_navbar">
+        <a href="#all" class="weui_navbar_item weui_bar_item_on">
+            <span>全部牛人</span>
+        </a>
+        <a href="#mine" class="weui_navbar_item">
+            <span>我的关注</span>
+        </a>
+    </div>
+    <div class="weui_tab_bd">
+        <div class="weui_search_bar" id="search_bar">
+          <form class="weui_search_outer">
+            <div class="weui_search_inner">
+              <i class="weui_icon_search"></i>
+              <input type="search" class="weui_search_input" id="search_input" placeholder="搜索" required name="q" value="{{ q }}">
+              <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+            </div>
+            <label for="search_input" class="weui_search_text" id="search_text">
+              <i class="weui_icon_search"></i>
+              <span>搜索</span>
+            </label>
+          </form>
+          <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
+        </div>
+        <div id="all" class="weui_tab_bd_item weui_tab_bd_item_active">
+            <div class="weui_cells">
+                
+            </div>
+            <div class="weui-infinite-scroll">
+		        <div class="infinite-preloader"></div>
+		        正在加载...
+		    </div>
+        </div>
+        <div id="mine" class="weui_tab_bd_item">
+            <div class="weui_cells">
+                
+            </div>
+            <div class="weui-infinite-scroll">
+	           <div class="infinite-preloader"></div>
+	           正在加载...
+	        </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block css %}
+<style type="text/css">
+  
+</style>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    $(document).ready(function(){
+    	var curpage = 1; 
+    	var loading = false;  //状态标记
+    	var token = 'all';
+    	var settings = {'all':{'page': 1, 'loaded': false}
+                      , 'mine': {'page': 1, 'loaded': false}}
+   		$(".weui_cells").on('click', '.weui_btn_plain_primary', function(){
+   			var bigv_id = $(this).attr('title');
+   			var handler = $(this);
+   			$.get("{% url 'follow' %}", {'openid': '{{ openid }}', 'bigv_id': bigv_id}, function(data){
+   				if(data.res){
+   					$(handler).text("已关注");
+   					$(handler).removeClass('weui_btn_plain_primary').addClass('weui_btn_plain_default');
+   				}else{
+   					$.notification({
+                        title: "提示",
+                        text: "关注失败！",
+                     });
+   				}
+   				
+   			})
+        });
+        $(".weui_cells").on('click', '.weui_btn_plain_default', function(){
+        	var bigv_id = $(this).attr('title');
+        	var handler = $(this);
+            $.get("{% url 'unfollow' %}", {'openid': '{{ openid }}', 'bigv_id': bigv_id}, function(data){
+                if(data.res){
+                	$(handler).text("+关注");
+                	$(handler).removeClass('weui_btn_plain_default').addClass('weui_btn_plain_primary');
+                }else{
+                    $.notification({
+                        title: "提示",
+                        text: "取消关注失败！",
+                     });
+                }
+                
+            })
+            
+        });
+    	
+    	function getpage(token, page){
+    		$.ajax({
+   			    type: "GET",
+   			    url: "{% url 'bigvs_index' %}" + token +"/",
+   			    data: {'page': page, 'openid': '{{ openid }}', 'q': '{{ q }}'},
+   			    success: function(data){
+   				    $("#"+token+">.weui_cells").append(data);
+   			    },
+   			    statusCode: {404: function() {
+   			    	$.notification({
+   			    	  title: "提示",
+   			    	  text: "没有更多内容！",
+   			    	  media: "",
+   			    	  data: "",
+   			    	  time: 2000,
+   			    	  onClick: function(data) {
+   			    	    
+   			    	  },
+   			    	  onClose: function(data) {
+   			    	    
+   			    	  }
+   			    	});
+   			    }},
+   			    complete: function(){
+   			    	loading = false;
+                    $(".weui-infinite-scroll").hide();
+                    settings[token]['loaded'] = true;
+   			    }
+   			});
+      	}
+    	
+    	$(".weui_navbar_item").click(function(){
+    		token = $(this).attr('href').split("#")[1];
+    		/* if(!settings[token]['loaded']){
+    			getpage(token, settings[token]['page']);
+    		} */
+    		$("#"+token+">.weui_cells").html('');
+    		getpage(token, 1);
+    	});
+        getpage(token, 1);
+        $(document.body).infinite().on("infinite", function() {
+          if(loading) return;
+          loading = true;
+          $(".weui-infinite-scroll").show();
+          getpage(token, ++settings[token]['page']);
+        });
+    });
+    </script>
+{% endblock %}

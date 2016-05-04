@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+  {{ obj.title }}
+{% endblock %}
+
+{% block content %}
+<div class="weui_cell">
+    <div class="weui_cell_hd">
+        <img src="" alt="icon" style="">
+    </div>
+    <div class="weui_cell_bd weui_cell_primary">
+        <p class="cell_title">
+          {{ obj.bigv_name }}
+          <span>言值|{{ obj.words_weight }}</span>
+        </p>
+        <p class="cell_desc">{{ obj.publish_date|date:'m-d H:i' }} 来自{{ obj.article_source }}</p>
+    </div>
+</div>
+<article class="weui_article">
+    <h1>{{ obj.title }}</h1>
+    <section>
+        <p>{{ obj.content|safe }}</p>
+    </section>
+</article>
+{% endblock %}
