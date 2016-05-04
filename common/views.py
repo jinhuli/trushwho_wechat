@@ -28,13 +28,13 @@ class WeChatView(WeChatMixin, TemplateView):
     
     def get(self, request, *args, **kwargs):
         redirect_url = self.validate_code(request)
-#         if redirect_url: return HttpResponseRedirect(redirect_url)
+        if redirect_url: return HttpResponseRedirect(redirect_url)
         return super(WeChatView, self).get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context_data = super(WeChatView, self).get_context_data(**kwargs)
-#         context_data.update({'openid': self.openid})
-        context_data.update({'openid': 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'})
+        context_data.update({'openid': self.openid})
+#         context_data.update({'openid': 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'})
         q = self.request.GET.copy().get('q', '')
         context_data.update({'q':q})
         return context_data
@@ -44,10 +44,10 @@ class WeChatDetailView(WeChatMixin, DetailView):
     
     def get(self, request, *args, **kwargs):
         redirect_url = self.validate_code(request)
-#         if redirect_url: return HttpResponseRedirect(redirect_url)
+        if redirect_url: return HttpResponseRedirect(redirect_url)
         return super(WeChatDetailView, self).get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
         context_data = super(WeChatDetailView, self).get_context_data(**kwargs)
-#         context_data.update({'openid': self.openid})
+        context_data.update({'openid': self.openid})
         return context_data
