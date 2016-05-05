@@ -1,6 +1,5 @@
 .weui_navbar {
   background-color: #fff;
-  
 }
 .weui_navbar_item {
   padding: 16px 0 0 0;
@@ -26,6 +25,7 @@
   width:40px;
   height: 40px;
   margin-right:10px;
+  color: #404040;
 }
 .weui_cell_hd img {
   width:40px;
@@ -43,6 +43,16 @@
 }
 .cell_title {
   font-size: 16px;
+}
+.cell_title a {
+  color: #404040;
+}
+.cell_title span {
+  border-radius: 4px;
+  border: 1px solid #24A8F4;
+  color: #24A8F4;
+  padding: 2px;
+  font-size: 10px;
 }
 .cell_desc {
   color: #808080;

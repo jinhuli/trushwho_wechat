@@ -1,11 +1,10 @@
 # coding: utf-8
 
 from django.views.generic.list import ListView
-from django.db.models import Q
 from articles.models import ArticlePostedResults
 from wechat.models import WechatUser_BigVs
 from common.views import WeChatView, WeChatDetailView
-from bigvs.models import BigVsSrc
+from bigvs.models import BigVs
 
 class ArticleIndexView(WeChatView):
     template_name = 'articles/articles_index.html'
@@ -25,7 +24,7 @@ class ArticleListView(ListView):
         q = data.get('q', '')
         queryset = queryset.extra(\
                 select={'bigv_name'\
-                : 'select name from big_vs_src where big_vs_src.v_id = article_posted_results.v_id limit 1'\
+                : 'select name from big_vs where big_vs.v_id = article_posted_results.v_id limit 1'\
                 , 'words_weight'\
                 : 'select words_weight from big_vs_src where big_vs_src.v_id = article_posted_results.v_id limit 1'}
         )
@@ -44,8 +43,20 @@ class ArticleDetailView(WeChatDetailView):
     
     def get_object(self, queryset=None):
         obj = super(ArticleDetailView, self).get_object(queryset)
-        bigv = BigVsSrc.objects.filter(v_id=obj.v_id)
+        bigv = BigVs.objects.filter(v_id=obj.v_id)
         if bigv.exists():
             obj.bigv_name = bigv[0].name
-            obj.words_weight = bigv[0].words_weight
+#             obj.words_weight = bigv[0].words_weight
         return obj
+
+class ArticleListForBigvView(ListView):
+    model = ArticlePostedResults
+    paginate_by = 20
+    allow_empty = True
+    template_name = 'articles/articles_for_bigv_list.html'
+    
+    def get_queryset(self):
+        queryset = super(ArticleListForBigvView, self).get_queryset()
+        v_id = self.kwargs.get('v_id', '')
+        queryset = queryset.filter(v_id=v_id)
+        return queryset

@@ -1,0 +1,25 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+测试页面
+{% endblock %}
+
+{% block content %}
+<div class="weui_cells weui_cells_access">
+  <a class="weui_cell" href="/articles/list/">
+    <div class="weui_cell_bd weui_cell_primary">
+      <p>精选言论</p>
+    </div>
+  </a>
+  <a class="weui_cell" href="/bigvs/list/">
+    <div class="weui_cell_bd weui_cell_primary">
+      <p>关注牛人</p>
+    </div>
+  </a>
+  <a class="weui_cell" href="/feedback/">
+    <div class="weui_cell_bd weui_cell_primary">
+      <p>意见反馈</p>
+    </div>
+  </a>
+</div>
+{% endblock %}

@@ -76,6 +76,9 @@
                 type: "GET",
                 url: "{% url 'article_index' %}" + token +"/",
                 data: {'page': page, 'openid': '{{ openid }}', 'q': '{{ q }}'},
+                beforeSend: function(){
+                    $(".weui-infinite-scroll").show();
+                },
                 success: function(data){
                     $("#"+token+">.weui_cells").append(data);
                 },
@@ -110,11 +113,10 @@
             $("#"+token+">.weui_cells").html('');
             getpage(token, 1);
         });
-        getpage(token, 1);
+        $(".weui_bar_item_on").click();
         $(document.body).infinite().on("infinite", function() {
           if(loading) return;
           loading = true;
-          $(".weui-infinite-scroll").show();
           getpage(token, ++settings[token]['page']);
         });
     });

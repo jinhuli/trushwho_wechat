@@ -7,12 +7,12 @@
 {% block content %}
 <div class="weui_cell">
     <div class="weui_cell_hd">
-        <img src="" alt="icon" style="">
+        <img src="/static/images/bv.png" alt="icon" style="">
     </div>
     <div class="weui_cell_bd weui_cell_primary">
         <p class="cell_title">
           {{ obj.bigv_name }}
-          <span>言值|{{ obj.words_weight }}</span>
+          <span>言值 {{ obj.words_weight }}</span>
         </p>
         <p class="cell_desc">{{ obj.publish_date|date:'m-d H:i' }} 来自{{ obj.article_source }}</p>
     </div>

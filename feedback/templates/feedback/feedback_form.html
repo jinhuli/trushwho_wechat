@@ -1,0 +1,68 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+意见反馈
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+<div class="weui_cells weui_cells_form">
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input" type="tel" placeholder="手机号" name="phone_number" id="id_phone_number">
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input" type="email" placeholder="邮箱" name="email" id="id_email">
+        </div>
+    </div>
+    <div class="weui_cell">
+        <div class="weui_cell_bd weui_cell_primary">
+            <textarea class="weui_textarea" placeholder="请输入您对信谁的反馈意见" rows="4" name="content" id="id_content"></textarea>
+        </div>
+    </div>
+    <input type="hidden" name="wechatuser" value="{{ wechatuser_id }}">
+</div>
+<button class="weui_btn weui_btn_primary" style="margin-top: 30px; width: 90%;">提交</button>
+</form>
+{% endblock %} 
+
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+    	$(".weui_btn").click(function(){
+    		var email = $("#id_email").val();
+    		if(!($("#id_phone_number").val()||email)){
+    			$.notification({
+                    title: "警告",
+                    text: "手机号或邮箱至少一项不能为空！",
+                    time: 2000
+                });
+    			return false;
+    		}
+    		if(email){
+    			var t = /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/;
+    			if(!t.test(email)){
+    				$.notification({
+                        title: "警告",
+                        text: "输入的邮箱不合法！",
+                        time: 2000
+                    });
+    				return false;
+    			}
+    		}
+    		if(!$("#id_content").val()){
+                $.notification({
+                    title: "警告",
+                    text: "反馈内容不能为空！",
+                    time: 2000
+                });
+                return false;
+            }
+    		$("form").submit();
+    	});
+    });
+</script>
+{% endblock %}

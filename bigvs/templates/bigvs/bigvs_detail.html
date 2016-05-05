@@ -1,0 +1,77 @@
+{% extends "base/base.html" %}
+
+{% block title %}
+  {{ obj.title }}
+{% endblock %}
+
+{% block content %}
+<div class="weui_cell">
+    <div class="weui_cell_hd">
+        <img src="/static/images/bv.png" alt="icon" style="">
+    </div>
+    <div class="weui_cell_bd weui_cell_primary">
+        <p class="cell_title">
+          {{ obj.name }}
+          <span>言值 {{ obj.words_weight|default_if_none:0 }}</span>
+        </p>
+        <p class="cell_desc">{{ obj.brief|default_if_none:"" }}</p>
+    </div>
+</div>
+<div class="weui_panel weui_panel_access">
+  <div class="weui_panel_bd">
+  
+  </div>
+  <div class="weui-infinite-scroll">
+     <div class="infinite-preloader"></div>
+     正在加载...
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+    $(document).ready(function(){
+        var curpage = 1; 
+        var loading = false;  //状态标记
+        
+        function getpage(page){
+            $.ajax({
+                type: "GET",
+                url: "{% url 'article_bigv_list' obj.v_id %}",
+                data: {'page': page},
+                beforeSend: function(){
+                	$(".weui-infinite-scroll").show();
+                },
+                success: function(data){
+                    $(".weui_panel_bd").append(data);
+                },
+                statusCode: {404: function() {
+                    $.notification({
+                      title: "提示",
+                      text: "没有更多内容！",
+                      media: "",
+                      data: "",
+                      time: 2000,
+                      onClick: function(data) {
+                        
+                      },
+                      onClose: function(data) {
+                        
+                      }
+                    });
+                }},
+                complete: function(){
+                    loading = false;
+                    $(".weui-infinite-scroll").hide();
+                }
+            });
+        }
+        $(document.body).infinite().on("infinite", function() {
+          if(loading) return;
+          loading = true;
+          getpage(++curpage);
+        });
+        getpage(1);
+    });
+    </script>
+{% endblock %}

@@ -1,11 +1,10 @@
 # coding: utf-8
-
-from common.views import WeChatView
-from bigvs.models import BigVs
-from wechat.models import WechatUser_BigVs, WechatUser
 from django.views.generic.list import ListView
 from django.http.response import JsonResponse
 
+from common.views import WeChatView, WeChatDetailView
+from bigvs.models import BigVs, BigVsSrc
+from wechat.models import WechatUser_BigVs, WechatUser
 from common.utils import debug
 
 
@@ -31,7 +30,7 @@ class BigVsListView(ListView):
             queryset = queryset.filter(pk__in=self.follows_bigvs)
         queryset = queryset.extra(
                 select={'brief'\
-                : 'select brief from big_vs_src where big_vs_src.v_id = big_vs.v_id limit 1'\
+                : "select brief from big_vs_src where big_vs_src.v_id = big_vs.v_id limit 1"\
                 , 'words_weight'\
                 : 'select words_weight from big_vs_src where big_vs_src.v_id = big_vs.v_id limit 1'}
         )
@@ -64,3 +63,13 @@ def unfollow(request):
         debug('unfollow', e, True)
         return JsonResponse({"res": False})
     return JsonResponse({"res": True})
+
+class BigvDetailView(WeChatDetailView):
+    template_name = 'bigvs/bigvs_detail.html'
+    model = BigVsSrc
+    context_object_name = 'obj'
+    
+    def get_object(self, queryset=None):
+        v_id = self.kwargs.get('v_id', '')
+        obj = BigVs.objects.filter(v_id=v_id)[0]
+        return obj

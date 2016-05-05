@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'bigvs',
     'articles',
     'wechat',
+    'feedback',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -166,6 +167,7 @@ SUIT_CONFIG = {
         {'app': 'wechat', 'label': _(u'微信用户管理'), 'icon':'icon-user'},
         {'app': 'bigvs', 'label': _(u'大V管理'), 'icon':'icon-heart'},
         {'app': 'articles', 'label': _(u'文章管理'), 'icon':'icon-list-alt'},
+        {'app': 'feedback', 'label': _(u'意见反馈'), 'icon':'icon-edit'},
         {'label': _(u'系统用户设置'), 'icon': 'icon-cog', 'models': ('auth.user', 'auth.group')},
     )
     
