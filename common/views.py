@@ -23,7 +23,7 @@ class WeChatMixin(object):
             if self.openid and (not WechatUser.objects.filter(openid=self.openid).exists()):
                 WechatUser.objects.create(openid=self.openid)
         else:
-            url = 'http://{0}{1}'.format(request.get_host(), request.path)
+            url = 'http://{0}{1}'.format(request.get_host(), request.get_full_path())
             if self.debug:
                 self.openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
             else:
