@@ -11,8 +11,8 @@ from django.views.generic.edit import CreateView
 
 class WeChatMixin(object):
     openid = None
+    debug = False
     def validate_code(self, request):
-#         self.openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
         data = request.GET.copy()
         code = data.get('code', '')
         sdk = WXSdk()
@@ -20,11 +20,14 @@ class WeChatMixin(object):
             result = sdk.oauth2_token(code)
             self.openid = result.get('openid')
             debug('WeChatMixin', self.openid)
-            if not WechatUser.objects.filter(openid=self.openid).exists():
+            if self.openid and (not WechatUser.objects.filter(openid=self.openid).exists()):
                 WechatUser.objects.create(openid=self.openid)
         else:
             url = 'http://{0}{1}'.format(request.get_host(), request.path)
-            return sdk.oauth2_redirect_uri(url)
+            if self.debug:
+                self.openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
+            else:
+                return sdk.oauth2_redirect_uri(url)
 
 class WeChatView(WeChatMixin, TemplateView):
     

@@ -25,9 +25,17 @@
     </div>
     <input type="hidden" name="wechatuser" value="{{ wechatuser_id }}">
 </div>
-<button class="weui_btn weui_btn_primary" style="margin-top: 30px; width: 90%;">提交</button>
+<a class="weui_btn weui_btn_primary" style="margin-top: 150px;">提交</a>
 </form>
 {% endblock %} 
+
+{% block css %}
+<style>
+.weui_btn {
+  width: 80%;
+}
+</style>
+{% endblock %}
 
 {% block js %}
 <script type="text/javascript">
