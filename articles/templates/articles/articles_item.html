@@ -18,7 +18,7 @@
     </div>
 </div>
 <article class="weui_article">
-    <h1>{{ obj.title }}</h1>
+    <h1>{{ obj.title|default_if_none:'' }}</h1>
     <section>
         <p>{{ obj.content|safe }}</p>
     </section>

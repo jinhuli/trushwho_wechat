@@ -1,7 +1,7 @@
 {% for obj in object_list %}
 <a href="{{ obj.get_absolute_url }}" class="weui_media_box weui_media_appmsg">
 <div class="weui_media_box weui_media_text">
-  <h4 class="weui_media_title">{{ obj.title|truncatechars:20 }}</h4>
+  <h4 class="weui_media_title">{{ obj.title|default_if_none:''|truncatechars:20 }}</h4>
   <p class="weui_media_desc">{{ obj.content|striptags|truncatechars:80 }}</p>
 </div>
 </a>

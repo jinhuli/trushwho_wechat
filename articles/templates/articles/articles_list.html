@@ -16,7 +16,7 @@
     </div>
     <div class="weui_cell_bd weui_cell_primary">
         <p class="cell_title">
-          {{ obj.title|truncatechars:20 }}
+          {{ obj.title|default_if_none:''|truncatechars:20 }}
         </p>
         <p class="cell_desc">{{ obj.content|striptags|truncatechars:80 }}</p>
     </div>
