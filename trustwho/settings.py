@@ -112,24 +112,24 @@ DATABASES = {
     }
 }
 
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-#         'LOCATION': 'django_cache_table',
-#     }
-# }
-
 CACHES = {
     'default': {
-        'BACKEND': 'redis_cache.cache.RedisCache',
-        'LOCATION': '127.0.0.1:6379',
-        "OPTIONS": {
-            'DB': 0,
-            'PASSWORD': 'redis7890',
-            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
-        },
-    },
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'django_cache_table',
+    }
 }
+
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'redis_cache.cache.RedisCache',
+#         'LOCATION': '127.0.0.1:6379',
+#         "OPTIONS": {
+#             'DB': 0,
+#             'PASSWORD': 'redis7890',
+#             "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+#         },
+#     },
+# }
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 CUBES_REDIS_TIMEOUT = 60 * 60
 NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
