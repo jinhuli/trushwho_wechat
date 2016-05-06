@@ -53,9 +53,12 @@ INSTALLED_APPS = (
     'articles',
     'wechat',
     'feedback',
+    'subscribe',
+    'accessrecord',
 )
 
 MIDDLEWARE_CLASSES = (
+#     'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -65,6 +68,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+#     'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 ROOT_URLCONF = 'trustwho.urls'
@@ -108,27 +112,31 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-        'LOCATION': 'django_cache_table',
-    }
-}
-
 # CACHES = {
 #     'default': {
-#         'BACKEND': 'redis_cache.cache.RedisCache',
-#         'LOCATION': '123.56.233.112:6379',
-#         "OPTIONS": {
-#             'DB': 1,
-#             'PASSWORD': 'redis7890',
-#             "CLIENT_CLASS": "redis_cache.client.DefaultClient",
-#         },
-#     },
+#         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+#         'LOCATION': 'django_cache_table',
+#     }
 # }
-# REDIS_TIMEOUT = 7 * 24 * 60 * 60
-# CUBES_REDIS_TIMEOUT = 60 * 60
-# NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
+
+CACHES = {
+    'default': {
+        'BACKEND': 'redis_cache.cache.RedisCache',
+        'LOCATION': '127.0.0.1:6379',
+        "OPTIONS": {
+            'DB': 0,
+            'PASSWORD': 'redis7890',
+            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+        },
+    },
+}
+REDIS_TIMEOUT = 7 * 24 * 60 * 60
+CUBES_REDIS_TIMEOUT = 60 * 60
+NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
+
+# CACHE_MIDDLEWARE_ALIAS = 'default'
+# CACHE_MIDDLEWARE_SECONDS = 60 * 60
+# CACHE_MIDDLEWARE_KEY_PREFIX = 'trustwho_wechat'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -168,6 +176,7 @@ SUIT_CONFIG = {
         {'app': 'bigvs', 'label': _(u'大V管理'), 'icon':'icon-heart'},
         {'app': 'articles', 'label': _(u'文章管理'), 'icon':'icon-list-alt'},
         {'app': 'feedback', 'label': _(u'意见反馈'), 'icon':'icon-edit'},
+        {'app': 'accessrecord', 'label': _(u'访问记录'), 'icon':'icon-edit'},
         {'label': _(u'系统用户设置'), 'icon': 'icon-cog', 'models': ('auth.user', 'auth.group')},
     )
     

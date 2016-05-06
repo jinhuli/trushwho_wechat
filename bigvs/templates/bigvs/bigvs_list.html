@@ -6,7 +6,7 @@
     <div class="weui_cell_bd weui_cell_primary">
         <p class="cell_title">
           <a href="{% url 'bigvs_detail' obj.v_id %}">{{ obj.name }}</a>
-          <span>言值 {{ obj.words_weight|default_if_none:0  }}</span>
+          <span>{{ obj.words_weight|default_if_none:0 }}</span>
         </p>
         <p class="cell_desc">{{ obj.brief|default_if_none:'' }}</p>
     </div>

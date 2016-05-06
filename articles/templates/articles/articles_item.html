@@ -12,7 +12,7 @@
     <div class="weui_cell_bd weui_cell_primary">
         <p class="cell_title">
           {{ obj.bigv_name }}
-          <span>言值 {{ obj.words_weight }}</span>
+          <span>{{ obj.words_weight|default_if_none:0 }}</span>
         </p>
         <p class="cell_desc">{{ obj.publish_date|date:'m-d H:i' }} 来自{{ obj.article_source }}</p>
     </div>

@@ -104,6 +104,11 @@
         });
     	
     	function getpage(token, page){
+    		var data = {'page': page, 'q': '{{ q }}'};
+    		if(token == 'mine'){
+    			data['openid'] = '{{ openid }}';
+    			data['r'] = Math.random();
+    		}
     		$.ajax({
    			    type: "GET",
    			    url: "{% url 'bigvs_index' %}" + token +"/",

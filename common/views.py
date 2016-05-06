@@ -2,11 +2,12 @@
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.http import HttpResponseRedirect
+from django.views.generic.edit import CreateView
 
 from wxsdk.models import WXSdk
 from wechat.models import WechatUser
 from common.utils import debug
-from django.views.generic.edit import CreateView
+from accessrecord.models import AccessRecord
 
 
 class WeChatMixin(object):
@@ -28,6 +29,7 @@ class WeChatMixin(object):
                 self.openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
             else:
                 return sdk.oauth2_redirect_uri(url)
+            
 
 class WeChatView(WeChatMixin, TemplateView):
     
@@ -49,6 +51,7 @@ class WeChatDetailView(WeChatMixin, DetailView):
     def get(self, request, *args, **kwargs):
         redirect_url = self.validate_code(request)
         if redirect_url: return HttpResponseRedirect(redirect_url)
+        AccessRecord.objects.create(openid=self.openid, record=request.path)
         return super(WeChatDetailView, self).get(request, *args, **kwargs)
     
     def get_context_data(self, **kwargs):
@@ -56,9 +59,11 @@ class WeChatDetailView(WeChatMixin, DetailView):
         context_data.update({'openid': self.openid})
         return context_data
     
+    
 class WechatCreateView(WeChatMixin, CreateView):
     
     def get(self, request, *args, **kwargs):
         redirect_url = self.validate_code(request)
         if redirect_url: return HttpResponseRedirect(redirect_url)
         return super(WechatCreateView, self).get(request, *args, **kwargs)
+

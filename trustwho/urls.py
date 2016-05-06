@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^bigvs/', include('bigvs.urls')),
     url(r'^articles/', include('articles.urls')),
     url(r'^feedback/', include('feedback.urls')),
+    url(r'^subscribe/', include('subscribe.urls')),
     url(r'^$', TemplateView.as_view(template_name='index.html')),
 ]

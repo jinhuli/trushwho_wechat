@@ -41,8 +41,9 @@ class ArticlePostedResults(models.Model):
         ordering = ('-publish_date',)
         
     def __unicode__(self):
-        return self.title
+        return self.title and self.title or u''
     
     @models.permalink
     def get_absolute_url(self):
         return ('article_item', None, {'pk': self.id})
+    

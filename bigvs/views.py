@@ -7,7 +7,6 @@ from bigvs.models import BigVs, BigVsSrc
 from wechat.models import WechatUser_BigVs, WechatUser
 from common.utils import debug
 
-
 class BigVsIndexView(WeChatView):
     template_name = 'bigvs/bigvs_index.html'
 
@@ -34,6 +33,7 @@ class BigVsListView(ListView):
                 , 'words_weight'\
                 : 'select words_weight from big_vs_src where big_vs_src.v_id = big_vs.v_id limit 1'}
         )
+        
         return queryset
     
     def get_context_data(self, **kwargs):

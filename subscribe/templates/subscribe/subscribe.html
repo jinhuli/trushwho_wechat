@@ -1,0 +1,81 @@
+{% extends 'base/base.html' %}
+
+{% block title %}
+风向订阅
+{% endblock %}
+
+{% block content %}
+<div style="height: 200px; text-align: center;">
+风向订阅H5页面介绍
+</div>
+<form action="" method="post">
+{% csrf_token %}
+<div class="weui_cells weui_cells_checkbox">
+    <label class="weui_cell weui_check_label" for="s11">
+        <div class="weui_cell_hd">
+            <input type="checkbox" class="weui_check" name="checkbox1" id="s11">
+            <i class="weui_icon_checked"></i>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>逃顶指南</p>
+        </div>
+    </label>
+    <label class="weui_cell weui_check_label" for="s12">
+        <div class="weui_cell_hd">
+            <input type="checkbox" name="checkbox1" class="weui_check" id="s12">
+            <i class="weui_icon_checked"></i>
+        </div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>抄底指南</p>
+        </div>
+    </label>
+</div>
+<a class="weui_btn weui_btn_primary" style="margin-top: 150px;">订阅</a>
+</form>
+{% endblock %} 
+
+{% block css %}
+<style>
+.weui_btn {
+  width: 80%;
+}
+</style>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function(){
+    	$(".weui_btn").click(function(){
+    		var email = $("#id_email").val();
+    		if(!($("#id_phone_number").val()||email)){
+    			$.notification({
+                    title: "警告",
+                    text: "手机号或邮箱至少一项不能为空！",
+                    time: 2000
+                });
+    			return false;
+    		}
+    		if(email){
+    			var t = /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/;
+    			if(!t.test(email)){
+    				$.notification({
+                        title: "警告",
+                        text: "输入的邮箱不合法！",
+                        time: 2000
+                    });
+    				return false;
+    			}
+    		}
+    		if(!$("#id_content").val()){
+                $.notification({
+                    title: "警告",
+                    text: "反馈内容不能为空！",
+                    time: 2000
+                });
+                return false;
+            }
+    		$("form").submit();
+    	});
+    });
+</script>
+{% endblock %}
