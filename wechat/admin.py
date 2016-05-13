@@ -23,3 +23,4 @@ class WechatUserAdmin(admin.ModelAdmin):
 class WechatUser_BigVsAdmin(admin.ModelAdmin):
     list_display = ['wechatuser', 'bigvs', 'subscribe_time']
     search_fields = ['wechatuser__openid', 'wechatuser__nickname', 'bigvs__name']
+    raw_id_fields = ['bigvs', 'wechatuser']

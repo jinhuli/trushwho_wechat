@@ -27,6 +27,9 @@
   margin-right:10px;
   color: #404040;
 }
+.weui_media_text {
+  padding: 0px;
+}
 .weui_cell_hd img {
   width:40px;
   height: 40px;
@@ -46,6 +49,9 @@
 }
 .cell_title a {
   color: #404040;
+}
+p.cell_title {
+  color: #383838;
 }
 .cell_title span {
   width: 19px;
@@ -71,3 +77,6 @@
 .weui_btn_primary {
   background-color: #24A8F4;
 }
+div.ac {
+    margin-top: 10px;
+  }

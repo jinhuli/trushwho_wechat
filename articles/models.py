@@ -1,9 +1,15 @@
 # coding: utf-8
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.template.defaultfilters import striptags
 
 from common.constants import ARTICLE_CATEGORY_CHOICES, ARTICLE_IS_CORRECT_CHOICES\
 , ARTICLE_EMOTION_LEVEL_CHOICES, ARTICLE_PERIOD_CHOICES, ARTICLE_STATUS_CHOICES
+from bigvs.models import BigVs
+
+class ArticleActiveManager(models.Manager):
+    def get_queryset(self):
+        return super(ArticleActiveManager, self).get_queryset().filter(article_status__in=(2, 3))
 
 
 class ArticlePostedResults(models.Model):
@@ -12,7 +18,7 @@ class ArticlePostedResults(models.Model):
     title = models.CharField(_(u'标题'), max_length=255, blank=True, null=True)
     content = models.TextField(_(u'内容'), blank=True, null=True)
     publish_date = models.DateTimeField(_(u'发布日期'), blank=True, null=True)
-    v_id = models.CharField(_(u'大Vid'), max_length=36, blank=True, null=True)
+    bigv = models.ForeignKey(BigVs, to_field='v_id', verbose_name=_(u'大Vid'), max_length=36, db_column='v_id')
     source_id = models.CharField(_(u'源id'), max_length=36, blank=True, null=True)
     scrapy_date = models.DateTimeField(_(u'添加日期'), blank=True, null=True)
     article_type = models.CharField(_(u'类型'), max_length=2, blank=True, null=True)
@@ -33,7 +39,9 @@ class ArticlePostedResults(models.Model):
     period = models.IntegerField(_(u'周期'), blank=True, null=True, choices=ARTICLE_PERIOD_CHOICES)
     article_status = models.IntegerField(_(u'状态'), blank=True, null=True, choices=ARTICLE_STATUS_CHOICES)
     comment = models.CharField(_(u'描述'), max_length=45, blank=True, null=True)
- 
+    active_objects = ArticleActiveManager()
+    objects = models.Manager()
+    
     class Meta:
         managed = False
         db_table = 'article_posted_results'
@@ -41,7 +49,7 @@ class ArticlePostedResults(models.Model):
         ordering = ('-publish_date',)
         
     def __unicode__(self):
-        return self.title and self.title or u''
+        return self.title and self.title or striptags(self.content)[:40]
     
     @models.permalink
     def get_absolute_url(self):

@@ -61,3 +61,9 @@ ARTICLE_STATUS_CHOICES = (
     (3, _(u'已发送')),
     (4, _(u'遗弃'))
 )
+
+PREDICTION_VIEWPOINT_CHOICES = (
+    (u'rise', _(u'看多')),
+    (u'drop', _(u'看空')),
+    (u'bumpy', _(u'看平')),
+)
