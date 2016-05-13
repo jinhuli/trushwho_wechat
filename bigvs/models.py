@@ -71,7 +71,7 @@ def build_words_weight():
     from django.db.models.aggregates import Count
     for b in BigVs.objects.all():
         data = ArticlePostedResults.active_objects.filter(bigv__v_id=b.v_id, is_correct__in=(0, 1)).values('is_correct').annotate(count=Count('is_correct')).order_by('is_correct')
-        sum = 0
+        sum , w = 0, 0
         for d in data:
             if d['is_correct'] == 1:
                 c = d['count']
@@ -80,5 +80,5 @@ def build_words_weight():
             w = int(round(c * 1.0 / sum * 100)) 
             b.words_weight = w
             b.save()
-            print b.name, w
+        print b.name, w
         

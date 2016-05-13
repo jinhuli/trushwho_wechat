@@ -155,6 +155,7 @@ $(document).ready(function(){
             'async': true,
             'afterSelectedHandler': function(data){
                 $("#search_input").val(data.label);
+                $("form").submit();
             },
             'emphasis': false,
         });
