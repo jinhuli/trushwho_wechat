@@ -41,7 +41,7 @@ class ArticleListForSelectView(ListView):
         data = self.request.GET.copy()
         bid = data.get('id', '')
         if bid:
-            queryset = ArticlePostedResults.active_objects.filter(bigv__id=bid).only('id', 'title')[:10]
+            queryset = ArticlePostedResults.active_objects.filter(bigv__id=bid).only('id', 'title').order_by('-publish_date')[:10]
             return queryset
         return EmptyQuerySet
     

@@ -7,3 +7,4 @@ redis==2.10.5
 django-redis==3.8.3 
 uwsgi==2.0.12
 xpinyin==0.5.4
+django-debug-toolbar==1.4
