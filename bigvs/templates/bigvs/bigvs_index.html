@@ -1,7 +1,7 @@
 {% extends "base/base.html" %}
 
 {% block title %}
-关注牛人
+大V言值
 {% endblock %}
 
 {% block content %}
@@ -40,12 +40,21 @@
             <div class="weui_cells">
                 
             </div>
-            
         </div>
         <div class="weui-infinite-scroll">
            <div class="infinite-preloader"></div>
            正在加载...
         </div>
+        <div class="empty_hint v">
+            <p>
+            您还没有关注任何大V，点击<br/>
+            全部大V去关注吧
+            </p>
+            <br/><br/><br/><br/>
+            没有感兴趣的大V？<br/>
+            <a class="weui_btn weui_btn_primary" style="margin-top: 50px; width: 80%;">推荐大V</a>
+        </div>
+        
     </div>
 </div>
 {% endblock %}
@@ -64,6 +73,7 @@
 {% block js %}
 <script type="text/javascript" src="/static/js/jquery.autocomplete.min.js"></script>
 <script type="text/javascript">
+{% with openid=request.wechatuser.openid %}
 $(document).ready(function(){
 	var curpage = 1; 
 	var loading = false;  //状态标记
@@ -73,65 +83,24 @@ $(document).ready(function(){
 	if('{{ q }}'){
         $("#search_text").click();
     }
-	$(".weui_cells").on('click', '.weui_btn_plain_primary', function(){
-		var bigv_id = $(this).attr('title');
-		var handler = $(this);
-		$.get("{% url 'follow' %}", {'openid': '{{ openid }}', 'bigv_id': bigv_id}, function(data){
-			if(data.res){
-				$(handler).text("已关注");
-				$(handler).removeClass('weui_btn_plain_primary').addClass('weui_btn_plain_default');
-			}else{
-				$.notification({
-                    title: "提示",
-                    text: "关注失败！",
-                 });
-			}
-			
-		})
-    });
-    $(".weui_cells").on('click', '.weui_btn_plain_default', function(){
-    	var bigv_id = $(this).attr('title');
-    	var handler = $(this);
-        $.get("{% url 'unfollow' %}", {'openid': '{{ openid }}', 'bigv_id': bigv_id}, function(data){
-            if(data.res){
-            	$(handler).text("+关注");
-            	$(handler).removeClass('weui_btn_plain_default').addClass('weui_btn_plain_primary');
-            }else{
-                $.notification({
-                    title: "提示",
-                    text: "取消关注失败！",
-                 });
-            }
-            
-        })
-        
-    });
+	
 	
 	function getpage(token, page){
 		$.ajax({
 		    type: "GET",
 		    url: "{% url 'bigvs_index' %}" + token +"/",
-		    data: {'page': page, 'q': '{{ q }}', 'openid': '{{ openid }}'},
+		    data: {'page': page, 'q': '{{ q }}', 'openid': '{{ request.wechatuser.openid }}'},
 			beforeSend: function(){
-             $(".weui-infinite-scroll").show();
-         },
+              $(".weui-infinite-scroll").show();
+            },
 		    success: function(data){
 			    $("#"+token+">.weui_cells").append(data);
+			    if($.trim(data) == ''){
+			    	showMsg("提示", "没有更多内容！");
+			    }
 		    },
 		    statusCode: {404: function() {
-		    	$.notification({
-		    	  title: "提示",
-		    	  text: "没有更多内容！",
-		    	  media: "",
-		    	  data: "",
-		    	  time: 2000,
-		    	  onClick: function(data) {
-		    	    
-		    	  },
-		    	  onClose: function(data) {
-		    	    
-		    	  }
-		    	});
+		    	$('.v').show();
 		    }},
 		    complete: function(){
 		    	loading = false;
@@ -140,8 +109,8 @@ $(document).ready(function(){
 		    }
 		});
   	}
-	
 	$(".weui_navbar_item").click(function(){
+		$('.v').hide();
 		token = $(this).attr('href').split("#")[1];
 		$("#"+token+">.weui_cells").html('');
 		getpage(token, 1);
@@ -168,5 +137,6 @@ $(document).ready(function(){
     });
     
 });
+{% endwith %}
 </script>
 {% endblock %}

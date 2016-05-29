@@ -4,7 +4,7 @@ Created on 2016年4月28日
 
 @author: likun
 '''
-
+from django.conf import settings
 from django.core.cache import cache
 from poster.encode import multipart_encode
 from poster.streaminghttp import register_openers
@@ -12,13 +12,12 @@ from poster.streaminghttp import register_openers
 import time, hashlib, string, random, urllib, urllib2, json
 
 from common.utils import debug
-from trustwho.settings import WECHAT_APPID, WECHAT_APPSECRET, WECHAT_TOKEN
 
 
 class JSSdk():
     def __init__(self, openId, url):
-        self.appId = WECHAT_APPID
-        self.appSecret = WECHAT_APPSECRET
+        self.appId = settings.WECHAT_APPID
+        self.appSecret = settings.WECHAT_APPSECRET
 
         self.url = self.escape(url)
         self.access_token_api = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}' \
@@ -81,9 +80,9 @@ class JSSdk():
 
 class WXSdk():
     def __init__(self):
-        self.appId = WECHAT_APPID
-        self.appSecret = WECHAT_APPSECRET
-        self.token = WECHAT_TOKEN
+        self.appId = settings.WECHAT_APPID
+        self.appSecret = settings.WECHAT_APPSECRET
+        self.token = settings.WECHAT_TOKEN
         self.access_token_api = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={0}&secret={1}' \
                                 .format(self.appId, self.appSecret)
 
@@ -120,7 +119,7 @@ class WXSdk():
 
     def oauth2_redirect_uri(self, url):
         return 'https://open.weixin.qq.com/connect/oauth2/authorize?appid={0}&redirect_uri={1}&response_type=code&scope=snsapi_base&state=123#wechat_redirect'\
-                .format(WECHAT_APPID, urllib.quote(url))
+                .format(settings.WECHAT_APPID, urllib.quote(url))
                 
     def oauth2_token(self, code):
         oauth2_token_api = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid={0}&secret={1}&code={2}&grant_type=authorization_code'\
@@ -129,17 +128,7 @@ class WXSdk():
         result = json.loads(res.read())
         return result
 
-    def menu_create(self, menus):
-        buttons = []
-        for menu in menus:
-            btn = {'name':menu.name, 'type':menu.type, 'key': menu.key, 'url':menu.url, 'media_id':menu.media_id}
-            sub_button = []
-            for sub_menu in menu.sub_menus:
-                sub_btn = {'name':sub_menu.name, 'type':sub_menu.type, 'key': sub_menu.key, 'url':sub_menu.url, 'media_id':sub_menu.media_id}
-                sub_button.append(sub_btn)
-            if menu.sub_menus:
-                btn.update({'sub_button':sub_button})
-            buttons.append(btn)
+    def menu_create(self, buttons):
         post_data = {'button':buttons}
         create_menu_api = 'https://api.weixin.qq.com/cgi-bin/menu/create?access_token={0}' \
                         .format(self.__get_access_token())
@@ -176,7 +165,6 @@ class WXSdk():
                                 .format(self.__get_access_token())
         request = urllib2.Request(create_material_api, datagen, headers)
         result = urllib2.urlopen(request).read()
-        print result
         result = json.loads(result)
         if 'errcode' in result.keys():
             return (0, result.get('errcode'), result.get('errmsg'))

@@ -1,18 +1,22 @@
 {% extends "base/base.html" %}
 
 {% block title %}
-精选言论
+大V预测
 {% endblock %}
 
 {% block content %}
 <div class="weui_tab">
     <div class="weui_navbar">
-        <a href="#mine" class="weui_navbar_item{% if token == 'mine' or not token %} weui_bar_item_on{% endif %}">
-            <span>我的关注</span>
-        </a>
-        <a href="#all" class="weui_navbar_item{% if token == 'all' %} weui_bar_item_on{% endif %}">
+        <a href="#all" class="weui_navbar_item{% if token == 'all' or not token %} weui_bar_item_on{% endif %}">
             <span>全部言论</span>
         </a>
+        <a href="#mine" class="weui_navbar_item{% if token == 'mine'%} weui_bar_item_on{% endif %}">
+            <span>我的关注</span>
+        </a>
+        <a href="#judge" class="weui_navbar_item{% if token == 'judge'%} weui_bar_item_on{% endif %}">
+            <span>我的验证</span>
+        </a>
+        
     </div>
     <div class="weui_tab_bd">
         <div class="weui_search_bar" id="search_bar">
@@ -30,6 +34,13 @@
           </form>
           <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
         </div>
+		<div class="nav">
+		    验证数量超过{{ request.wechatuser.rank }}的用户
+		    <a class="valid">已验证</a>
+		    <a class="no_due">未到期</a>
+		    <a class="due cur">可验证</a>
+		</div>
+
         <div id="mine" class="weui_tab_bd_item">
             <div class="weui_cells">
                 
@@ -40,9 +51,38 @@
                 
             </div>
         </div>
+        <div id="judge" class="weui_tab_bd_item">
+            <div class="weui_cells">
+                
+            </div>
+        </div>
         <div class="weui-infinite-scroll">
            <div class="infinite-preloader"></div>
            正在加载...
+        </div>
+        
+        <div class="empty_hint no_due">
+	        <p>
+	        还没有内容，点击全部言论！<br/>
+	        去看看新的文章吧！<br/>
+	        </p>
+	    </div>
+        <div class="empty_hint due">
+	        <p>
+	        没有需要验证的观点！<br/>
+	        先逛一逛，去看看新的文章吧<br/>！
+	        </p>
+	    </div>
+        <div class="empty_hint valid">
+	        <p>
+	        别心急，时间到了自然见分晓！
+	        </p>
+        </div>
+        <div class="empty_hint mine">
+	        <p>
+	        暂无关注的大V，点击全部言论<br/>
+	        或者关注大V吧
+	        </p>
         </div>
     </div>
 </div>
@@ -50,27 +90,71 @@
 
 {% block css %}
 <link rel="stylesheet" type="text/css" href="/static/css/jquery.autocomplete.css"></link>
-<style type="text/css">
+<style>
   .weui_cell, .weui_cell:before {
-	border-top: 1px solid #fff;
+    content: none;
+  }
+  .nav {
+    line-height: 44px;
+    color: #919191;
+    padding: 0 10px;
+    font-size: 12px;
+    display: none;
+  }
+  .nav a {
+    float: right;
+    margin-right: 20px;
+  }
+  .nav a.cur {
+    color: #007ABB;
+  }
+  div.judge_action {
+    font-size: 14px;
+	color: #007CB6;
+	background-color: #FFF;
+	line-height: 32px;
+	padding-left: 20px;
+	border-bottom: 1px solid #DADADA;
+  }
+  div.judge_action .del {
+    background: url(/static/images/del.png) no-repeat center center;
+    background-size: 12px 12px;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    float: right;
+    margin-right: 10px;
+  }
+  div.judge_hint {
+    background: url(/static/images/hint.png) no-repeat 6px 8px;
+    background-size: 9px 13px;
+    background-color: #F5F5F5;
+    color: #919191;
+    font-size: 14px;
+    padding-left:20px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 5px;
   }
 </style>
+
 {% endblock %}
 
 {% block js %}
 <script type="text/javascript" src="/static/js/jquery.autocomplete.min.js"></script>
 <script type="text/javascript">
+{% with openid=request.wechatuser.openid %}
 $(document).ready(function(){
     var curpage = 1; 
     var loading = false;  //状态标记
-    var token = 'mine';
-    var settings = {'all':{'page': 1, 'loaded': false}
-                  , 'mine': {'page': 1, 'loaded': false}}
+    var token = 'all';
+    var data = {'q': '{{ q }}'};
+    var jtype = '';
     if('{{ q }}'){
     	$("#search_text").click();
     }
     function getpage(token, page){
-    	var data = {'page': page, 'q': '{{ q }}'};
+    	data['page'] = page;
         if(token == 'mine'){
             data['openid'] = '{{ openid }}';
             //data['r'] = Math.random();
@@ -82,58 +166,92 @@ $(document).ready(function(){
             beforeSend: function(){
                 $(".weui-infinite-scroll").show();
             },
-            success: function(data){
-                $("#"+token+">.weui_cells").append(data);
+            success: function(res){
+                $("#"+token+">.weui_cells").append(res);
+                if($.trim(res) == ''){
+                    showMsg("提示", "没有更多内容！");
+                }
             },
             statusCode: {404: function() {
-                $.notification({
-                  title: "提示",
-                  text: "没有更多内容！",
-                  media: "",
-                  data: "",
-                  time: 2000,
-                  onClick: function(data) {
-                    
-                  },
-                  onClose: function(data) {
-                    
-                  }
-                });
+                if(token == 'judge'){
+                	showHint(jtype);
+                }else{
+                	showHint(token);
+                }
             }},
             complete: function(){
                 loading = false;
                 $(".weui-infinite-scroll").hide();
-                settings[token]['loaded'] = true;
             }
         });
     }
-    
+    function showHint(type){
+    	if($("#" + token + " .weui_cells").html() == ''){
+    		$("." + type).show();
+    	}
+    }
+    function hideHint(){
+    	$(".empty_hint").hide();
+    }
     $(".weui_navbar_item").click(function(){
+    	hideHint();
         token = $(this).attr('href').split("#")[1];
+        if(token == 'judge'){
+        	$('#search_bar').hide()
+        	$('.nav').show();
+        }else{
+        	$('#search_bar').show()
+        	$('.nav').hide();
+        }
         $("#"+token+">.weui_cells").html('');
         $("#"+token).removeClass('weui_tab_bd_item_active');
         $("#"+token).addClass('weui_tab_bd_item_active');
-        getpage(token, 1);
+        curpage = 1;
+        getpage(token, curpage);
         $("#id_token").val(token);
         $("#search_input").AutoComplete({
             'data': '{% url "article_jsondata_for_title" %}?token='+token+'&openid={{ openid }}',
             'width': 'auto',
             'ajaxDataType': 'json',
             'async': true,
-            'afterSelectedHandler': function(data){
-                $("#search_input").val(data.label);
+            'afterSelectedHandler': function(res){
+                $("#search_input").val(res.label);
                 $("form").submit();
             },
             'emphasis': false,
         });
     });
+    $(".nav a").click(function(){
+    	hideHint();
+    	$(".nav a").removeClass('cur');
+    	jtype = $(this).attr('class')
+    	data['jtype']= jtype;
+    	$(this).addClass('cur');
+    	$("#"+token+">.weui_cells").html('');
+    	curpage = 1;
+    	getpage(token, curpage);
+    });
+    $(".weui_cells").on('click', 'a.del', function(){
+    	var item = $(this);
+        var id = item.attr('title');
+    	$.confirm("确定要删除吗？", function() {
+    		$.post('{% url "article_judge_delete" %}', {id: id}, function(res){
+                if(res.status == 'ok'){
+                    item.parent().parent().slideUp();
+                }
+            });
+		}, function() {
+
+		});
+    });
     $(".weui_bar_item_on").click();
     $(document.body).infinite().on("infinite", function() {
       if(loading) return;
       loading = true;
-      getpage(token, ++settings[token]['page']);
+      getpage(token, ++curpage);
     });
     
 });
+{% endwith %}
 </script>
 {% endblock %}

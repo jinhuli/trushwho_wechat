@@ -1,12 +1,15 @@
 # coding: utf-8
 from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 from django.http.response import JsonResponse
 from django.db.models import Q
 
-from common.views import WeChatView, WeChatDetailView, JSONListView
+from common.views import WeChatView, JSONListView
 from bigvs.models import BigVs
 from wechat.models import WechatUser_BigVs, WechatUser
 from common.utils import debug
+from common.decorators import openid_exempt
+from articles.models import ArticlePostedResults
 
 
 class BigVsIndexView(WeChatView):
@@ -16,7 +19,7 @@ class BigVsIndexView(WeChatView):
 class BigVsListView(ListView):
     model = BigVs
     paginate_by = 20
-    allow_empty = True
+    allow_empty = False
     template_name = 'bigvs/bigvs_list.html'
     
     def get_queryset(self):
@@ -39,7 +42,9 @@ class BigVsListView(ListView):
         context_data.update({'follows_bigvs': self.follows_bigvs})
         context_data.update({'token': self.kwargs.get('token', 'all')})
         return context_data
-    
+
+
+@openid_exempt
 def follow(request):
     data = request.GET.copy()
     openid = data.get('openid')
@@ -52,6 +57,8 @@ def follow(request):
         return JsonResponse({"res": False})
     return JsonResponse({"res": True})
 
+
+@openid_exempt
 def unfollow(request):
     data = request.GET.copy()
     openid = data.get('openid')
@@ -63,7 +70,8 @@ def unfollow(request):
         return JsonResponse({"res": False})
     return JsonResponse({"res": True})
 
-class BigvDetailView(WeChatDetailView):
+
+class BigvDetailView(DetailView):
     template_name = 'bigvs/bigvs_detail.html'
     context_object_name = 'obj'
     model = BigVs
@@ -72,6 +80,15 @@ class BigvDetailView(WeChatDetailView):
     
     def get_queryset(self):
         return super(BigvDetailView, self).get_queryset().only('name', 'v_id', 'brief', 'words_weight')
+    
+    def get_context_data(self, **kwargs):
+        context = super(BigvDetailView, self).get_context_data(**kwargs)
+        obj = kwargs.get('object')
+        followers = WechatUser_BigVs.objects.filter(bigvs_id=obj.id).count()
+        is_follow = WechatUser_BigVs.objects.filter(wechatuser=self.request.wechatuser, bigvs_id=obj.id)
+        articles = ArticlePostedResults.objects.filter(bigv_id=obj.v_id).count()
+        context.update({'followers': followers, 'articles': articles, 'is_follow':is_follow})
+        return context
     
     
 class BigvJsonDataForTitleView(JSONListView):

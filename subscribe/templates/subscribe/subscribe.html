@@ -46,35 +46,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
     	$(".weui_btn").click(function(){
-    		var email = $("#id_email").val();
-    		if(!($("#id_phone_number").val()||email)){
-    			$.notification({
-                    title: "警告",
-                    text: "手机号或邮箱至少一项不能为空！",
-                    time: 2000
-                });
-    			return false;
-    		}
-    		if(email){
-    			var t = /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/;
-    			if(!t.test(email)){
-    				$.notification({
-                        title: "警告",
-                        text: "输入的邮箱不合法！",
-                        time: 2000
-                    });
-    				return false;
-    			}
-    		}
-    		if(!$("#id_content").val()){
-                $.notification({
-                    title: "警告",
-                    text: "反馈内容不能为空！",
-                    time: 2000
-                });
-                return false;
-            }
-    		$("form").submit();
+    		
     	});
     });
 </script>

@@ -1,0 +1,8 @@
+{% extends "admin/change_list.html" %}
+{% load i18n %}
+
+{% block object-tools-items %}
+    <a href="/admin/wechat/menu/menu_create/" class="btn">{% trans "创建菜单" %}</a>
+    <a href="/admin/wechat/menu/menu_delete/" class="btn">{% trans "删除菜单" %}</a>
+    {{ block.super }}
+{% endblock %}

@@ -1,12 +1,15 @@
 # coding: utf-8
-from django.shortcuts import render, get_list_or_404
-
-from wechat.models import WechatUser_BigVs
-
-
 '''
 Created on 2016年4月28日
 
 @author: likun
 '''
+from django.views.generic.edit import CreateView
+from wechat.forms import CommentForm
 
+
+class CommentCreateView(CreateView):
+    form_class = CommentForm
+    
+    def get_success_url(self):
+        return self.object.content_object.get_absolute_url()

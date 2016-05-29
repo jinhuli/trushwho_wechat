@@ -8,3 +8,9 @@ django-redis==3.8.3
 uwsgi==2.0.12
 xpinyin==0.5.4
 django-debug-toolbar==1.4
+celery==3.1.23
+django-celery==3.1.17
+celery-with-redis==3.0
+django_extensions==1.6.7
+#django-markdown-deux==1.0.5
+markdown2==2.3.1

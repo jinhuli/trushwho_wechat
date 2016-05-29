@@ -1,10 +1,20 @@
-{% for obj in object_list %}
-<a href="{{ obj.get_absolute_url }}" class="weui_media_box weui_media_appmsg">
-<div class="weui_media_box weui_media_text">
-  <h4 class="weui_media_title">{{ obj.title|default_if_none:''|truncatechars:20 }}</h4>
-  <p class="weui_media_desc">{{ obj.content|striptags|truncatechars:80 }}</p>
-  <p class="weui_media_desc" style="float: right; margin-top: 10px;">{{ obj.publish_date|date:'m-d H:i' }}</p>
-  
+{% load article_filters %}
+
+<div class="list_title">
+{% if token == 'judge' %}已{% else %}未{% endif %}判断 {{ paginator.count }}
 </div>
+
+{% for article in object_list %}
+<a class="weui_cell weui_cells_access content" href="{{ article.get_absolute_url }}">
+    <div class="weui_cell_bd weui_cell_primary">
+        <div class="cell_title">
+          {{ article.title|default_if_none:''|truncatechars:20 }}
+          <div class="cell_bottom">{{ article.publish_date|date:'m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
+        </div>
+        <div class="cell_desc">{{ article.content|markdown|striptags|truncatechars:80 }}</div>
+        <div class="cell_bottom">来自{{ article.article_source }}
+            <span class="comment">{{ article.comments_count }}</span><span class="wrong">{{ article.judgement_wrong }}</span><span class="right">{{ article.judgement_right }}</span>
+        </div> 
+    </div>
 </a>
 {% endfor %}

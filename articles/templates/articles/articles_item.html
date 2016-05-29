@@ -1,26 +1,213 @@
 {% extends "base/base.html" %}
+{% load article_filters %}
 
 {% block title %}
   {{ obj }}
 {% endblock %}
 
+{% block body_css %}detail{% endblock %}
+
 {% block content %}
-<div class="weui_cell">
-    <div class="weui_cell_hd">
-        <img src="/static/images/bv.png" alt="icon" style="">
+<div class="article {{ obj.id }}">
+  <div class="weui_cells">
+	<div class="weui_cell">
+	    <div class="weui_cell_hd">
+	        <img src="/static/images/bv.png" alt="icon" style="">
+	    </div>
+	    <div class="weui_cell_bd weui_cell_primary">
+	        <div class="cell_title">
+	          {{ obj.bigv.name }}
+	          <span>{{ obj.bigv.words_weight|default:"??" }}</span>
+	        </div>
+	        <div class="cell_bottom">{{ obj.publish_date|date:'Y-m-d H:i' }} <div class='calendar'>{{ obj.judgement_calendar|safe }}</div></div>
+	    </div>
+	</div>
+	<div class="t{{ obj.id|judge_status_css:request.wechatuser.openid }}" id="{{ obj.id }}">
+	<span class="right">{{ obj.judgement_right|default:0 }}</span> 
+	<span class="wrong">{{ obj.judgement_wrong|default:0 }}</span>
+	</div>
+  </div>
+	<article class="weui_article">
+	    <h1>{{ obj.title|default_if_none:'' }}</h1>
+	    <section>
+	        <p>{{ obj.content|markdown }}</p>
+	    </section>
+	    <div class="cell_bottom">来自{{ obj.article_source }}</div>
+	</article>
+</div>
+
+<div class="comment">
+	<div class="weui_cells_title">全部评论{% if is_comments %}({{ obj.comments_count }}){% endif %}</div>
+	{% if is_comments %}
+	{% for comment in comments %}
+	<div class="comment_content">
+        <div class="weui_cell">
+            <div class="weui_cell_hd">
+                <img src="{{ comment.wechatuser.headimgurl_thumb }}" alt="icon" style="">
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <div class="cell_desc">
+                  {{ comment.wechatuser.nickname }}
+                </div>
+                <div class="cell_bottom">{{ comment.created_datetime|date:'m-d H:i' }}</div>
+            </div>
+        </div>
+        <div class="weui_cell">
+            <div class="weui_cell_hd">
+            </div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <div class="cell_title">{{ comment.content }}</div>
+            </div>
+        </div>
     </div>
-    <div class="weui_cell_bd weui_cell_primary">
-        <p class="cell_title">
-          {{ obj.bigv.name }}
-          <span>{{ obj.bigv.words_weight|default_if_none:0 }}</span>
-        </p>
-        <p class="cell_desc">{{ obj.publish_date|date:'Y-m-d H:i' }} 来自{{ obj.article_source }}</p>
+    {% endfor %}
+	{% else %}
+	<div class="comment_content">
+    <p>说点什么吧！也许你就是下一个V！</p>
+    </div>
+	{% endif %}
+</div>
+<div class="post">
+	<div class="weui_cells weui_cells_form form_label">
+	  <div class="weui_cell">
+	    <div class="weui_cell_bd weui_cell_primary">
+	      <input class="weui_input" type="text" placeholder="说点什么吧！也许你就是下一个V！">
+	    </div>
+	    <div class="weui_cell_bd">
+        </div>
+	  </div>
+	</div>
+	<div class="post_form">
+	   <form action="{% url 'comment_add' %}" method="post">
+	   {% csrf_token %}
+	   <input type="hidden" name="object_id" value="{{ obj.id }}">
+	   <input type="hidden" name="wechatuser" value="{{ request.wechatuser.id }}">
+	   <input type="hidden" name="content_type" value="{{ content_type }}">
+	   <div class="weui_cells_title"><span class="cancel">取消</span>发表评论<span class="submit">发送</span></div>
+	   <div class="weui_cells weui_cells_form">
+	       <div class="weui_cell">
+			  <div class="weui_cell_bd weui_cell_primary">
+			    <textarea class="weui_textarea" placeholder="说点什么吧！也许你就是下一个V！" rows="4" name="content" id="id_content"></textarea>
+			  </div>
+			</div>
+	   </div>
+	   </form>
     </div>
 </div>
-<article class="weui_article">
-    <h1>{{ obj.title|default_if_none:'' }}</h1>
-    <section>
-        <p>{{ obj.content|safe }}</p>
-    </section>
-</article>
+{% endblock %}
+
+{% block css %}
+<style>
+.detail .article .weui_cell {
+  border-bottom: 1px solid #F0EFF5;
+}
+.detail .comment {
+  margin: 10px 0 64px 0;
+}
+.detail .weui_cells_title {
+  background-color: #fff;
+  margin-bottom: 0px;
+  padding: 10px 20px;
+
+}
+.detail .comment .weui_cell {
+  padding: 0;
+}
+.detail .comment .weui_cell:before {
+  border-top: 0;
+}
+.detail .comment_content {
+  padding-bottom: 10px;
+  padding: 10px;
+  background-color: #fff;
+  border-top: 1px solid #d9d9d9;
+}
+.detail .comment_content p {
+  text-align: center;
+  color: #919191;
+  font-size: 14px;
+}
+.detail .post {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  color: #C8C8C8;
+}
+.post_form {
+  display: none;
+}
+.post .weui_input {
+  border: 1px solid #C8C8C8;
+  border-radius: 3px;
+}
+.post_form .weui_cells_title {
+  text-align: center;
+}
+.post_form span.cancel {
+  float: left;
+}
+.post_form span.submit {
+  float: right;
+}
+.post {
+  z-index: 102;
+}
+.weui_textarea {
+  color: #666;
+}
+.t{
+  width: 38px;
+  height: 48px;
+  padding-left: 22px;
+  background-size: 20px 19px;
+  background-image: url('/static/images/t_normal.png');
+  background-repeat: no-repeat;
+  background-position: center left;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 101;
+}
+.t span {
+  line-height: 12px;
+  background-repeat: no-repeat;
+  font-size: 12px;
+  padding-right: 12px;
+  padding-left: 0;
+  background-position: center right;
+}
+</style>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+  $(document).ready(function(){
+	  $(".weui_input").focus(function(){
+		  $(".form_label").hide();
+		  $("#mask").show();
+		  $(".post_form").slideDown(function(){
+			  $("body").css({overflow:"hidden"});
+			  $("#id_content").focus();
+		  });
+	  });
+	  $(".post_form .cancel").click(function(){
+		  $("#mask").hide();
+		  $(".post_form").slideUp(function(){
+			  $(".form_label").show();
+	          $("body").css({overflow:"auto"});
+		  });
+		  
+	  });
+	  $(".post_form .submit").click(function(){
+		  if(!$("#id_content").val()){
+			  showMsg("警告", "评论内容不能为空！");
+			  return false;
+		  }
+		  $("form").submit();
+	  });
+	  $("#mask").click(function(){
+		  $(".post_form .cancel").click();
+	  });
+  });
+</script>
 {% endblock %}

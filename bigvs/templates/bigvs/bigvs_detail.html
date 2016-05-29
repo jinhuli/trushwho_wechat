@@ -4,61 +4,186 @@
   {{ obj.name }}
 {% endblock %}
 
+{% block css %}
+<style>
+.weui_tab_bd {
+  margin-top: 10px;
+}
+.v_head {
+  background-image: url(/static/images/v_bg.png);
+  height: 160px;
+  background-size: 100% 180px;
+  background-position: center center;
+  text-align: center;
+  padding-top: 20px;
+  color: #FFF;
+}
+.v_head .name {
+  font-size: 18px;
+}
+.v_head .brief {
+  font-size: 14px;
+}
+.v_head .weui_grids {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.weui_grids:before, .weui_grids:after, .weui_grid:before, .weui_grid:after {
+  border: none;
+}
+.v_head .weui_btn {
+  width: 82px;
+  height: 28px;
+  color: #FFF;
+  border: 1px solid #FFF;
+  font-size: 12px;
+  margin-top:6px;
+}
+.weui_grid {
+  width: 20%;
+  height: 40px;
+  padding: 0;
+}
+a.weui_grid {
+  color: #FFF;
+  background-color: 
+}
+.weui_grid_icon {
+  height: 15px;
+}
+.weui_grid_icon+.weui_grid_label {
+  margin-top: 0px;
+  color: #FFF;
+}
+.weui_panel_bd {
+  padding: 15px;
+}
+.list_title {
+  font-size: 14px;
+  color: #919191;
+  line-height: 30px;
+  background-color: #FFF;
+  padding-left: 10px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="weui_cell">
-    <div class="weui_cell_hd">
-        <img src="/static/images/bv.png" alt="icon" style="">
-    </div>
-    <div class="weui_cell_bd weui_cell_primary">
-        <p class="cell_title">
-          {{ obj.name }}
-          <span>{{ obj.words_weight|default_if_none:0 }}</span>
+<div class="v_head">
+	<p><img src="/static/images/bv.png" alt="icon" style="width: 54px;"></p>
+	<p class="name">{{ obj.name }}</p>
+	<p class="brief">{{ obj.brief|default_if_none:"" }}</p>
+	<div class="weui_grids">
+	  <div class="weui_grid">
+	    <div class="weui_grid_icon">
+	      {{ followers }} 
+	    </div>
+	    <p class="weui_grid_label">
+	      粉丝 
+	    </p>
+	  </div>
+	  <div class="weui_grid js_grid">
+        <div class="weui_grid_icon">
+          {{ articles }} 
+        </div>
+        <p class="weui_grid_label">
+          言论
         </p>
-        <p class="cell_desc">{{ obj.brief|default_if_none:"" }}</p>
+      </div>
+	  <a href="javascript:;" class="weui_grid js_grid">
+	    <div class="weui_grid_icon">
+	      {{ obj.words_weight|default:"??" }}
+	    </div>
+	    <p class="weui_grid_label">
+	      言值
+	    </p>
+	  </a>
+	  <div class="weui_grid js_grid" style="line-height: 40px;">
+        |
+      </div>
+      <div class="weui_grid js_grid">
+        {% if is_follow %}
+        <a href="javascript:;" class="weui_btn weui_btn_plain_default unfollow" title="{{ obj.id }}">已关注</a>
+        {% else %}
+        <a href="javascript:;" class="weui_btn weui_btn_plain_primary follow" title="{{ obj.id }}">+关注</a>
+        {% endif %}
+        
+      </div>
+	</div>
+</div>
+
+<div class="weui_tab">
+    <div class="weui_navbar">
+        <a href="#introduction" class="weui_navbar_item{% if token == 'intro' or not token %} weui_bar_item_on{% endif %}">
+            <span>简介</span>
+        </a>
+        <a href="#judge" class="weui_navbar_item{% if token == 'judge' %} weui_bar_item_on{% endif %}">
+            <span>已判断</span>
+        </a>
+        <a href="#no_judge" class="weui_navbar_item{% if token == 'no_judge' %} weui_bar_item_on{% endif %}">
+            <span>未判断</span>
+        </a>
+    </div>
+    <div class="weui_tab_bd">
+        <div id="introduction" class="weui_tab_bd_item weui_tab_bd_item_active">
+            <div class="weui_panel">
+			  <div class="weui_panel_hd">背景介绍</div>
+			  <div class="weui_panel_bd">
+			    <div class="weui_media_box weui_media_text">
+			      <p class="weui_media_desc">美国哥伦比亚大学统计系，曾任南方证券行业研究员，广发证券投资总监，证券从业经历超过14年，曾获得2014有多少显示多少有多少显示多少有多少显示多少有多少显示多少曾获得2014有多少显示多少有</p>
+			    </div>
+			  </div>
+			</div>
+            <div class="weui_panel">
+              <div class="weui_panel_hd">言论来源</div>
+              <div class="weui_panel_bd">
+                <div class="weui_media_box weui_media_text">
+                  <p class="weui_media_desc">今日头条</p>
+                  <p class="weui_media_desc">今日头条</p>
+                </div>
+              </div>
+            </div>
+            
+        </div>
+        <div id="judge" class="weui_tab_bd_item">
+            <div class="weui_cells">
+                
+            </div>
+        </div>
+        <div id="no_judge" class="weui_tab_bd_item">
+            <div class="weui_cells">
+                
+            </div>
+        </div>
+        <div class="weui-infinite-scroll">
+           <div class="infinite-preloader"></div>
+           正在加载...
+        </div>
     </div>
 </div>
-<div class="weui_panel weui_panel_access">
-  <div class="weui_panel_bd">
-  
-  </div>
-  <div class="weui-infinite-scroll">
-     <div class="infinite-preloader"></div>
-     正在加载...
-  </div>
-</div>
+
 {% endblock %}
 
 {% block js %}
     <script type="text/javascript">
     $(document).ready(function(){
         var curpage = 1; 
+        var token = 'introduction';
         var loading = false;  //状态标记
         
-        function getpage(page){
+        function getpage(token, page){
             $.ajax({
                 type: "GET",
                 url: "{% url 'article_bigv_list' obj.v_id %}",
-                data: {'page': page},
+                data: {'page': page, 'token': token},
                 beforeSend: function(){
                 	$(".weui-infinite-scroll").show();
                 },
                 success: function(data){
-                    $(".weui_panel_bd").append(data);
+                	$("#"+token+">.weui_cells").append(data);
                 },
                 statusCode: {404: function() {
-                    $.notification({
-                      title: "提示",
-                      text: "没有更多内容！",
-                      media: "",
-                      data: "",
-                      time: 2000,
-                      onClick: function(data) {
-                        
-                      },
-                      onClose: function(data) {
-                        
-                      }
-                    });
+                	showMsg("提示", "没有更多内容！");
                 }},
                 complete: function(){
                     loading = false;
@@ -66,12 +191,27 @@
                 }
             });
         }
+        $(".weui_navbar_item").click(function(){
+        	token = $(this).attr('href').split("#")[1];
+        	$("#"+token+">.weui_cells").html('');
+            curpage = 1;
+            getpage(token, curpage);
+        });
         $(document.body).infinite().on("infinite", function() {
+          if(token == 'introduction') return;
           if(loading) return;
           loading = true;
-          getpage(++curpage);
+          getpage(token, ++curpage);
         });
-        getpage(1);
+        $(window).scroll(function(){
+            var top = 180;
+            var scrollTop = $(window).scrollTop();
+            if(scrollTop>=top){
+                $(".weui_navbar").css({'position':'fixed'});
+            }else{
+                $(".weui_navbar").css({'position':'absolute'});
+            }
+        });
     });
     </script>
 {% endblock %}

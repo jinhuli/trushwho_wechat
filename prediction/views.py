@@ -1,17 +1,15 @@
 # coding: utf-8
 from django.db.models.aggregates import Count
-
-from common.views import WeChatListView
-from prediction.models import Prediction
-
-from datetime import datetime
-from common.constants import PREDICTION_VIEWPOINT_CHOICES
-from articles.models import ArticlePostedResults
 from django.views.generic.list import ListView
 from django.db.models.query import EmptyQuerySet
+from prediction.models import Prediction
+from common.constants import PREDICTION_VIEWPOINT_CHOICES
+from articles.models import ArticlePostedResults
+from articles.utils import cache_options
+from datetime import datetime
 
 
-class PredictionView(WeChatListView):
+class PredictionView(ListView):
     model = Prediction
     template_name = 'prediction/index.html'
     
@@ -26,12 +24,14 @@ class PredictionView(WeChatListView):
         for d in data:
             d.update({'name': dict(PREDICTION_VIEWPOINT_CHOICES)[d['viewpoint']].title()})
             d.update({'items': queryset.filter(viewpoint=d['viewpoint']).only(\
-            'bigv__v_id', 'article__title', 'article__content', 'article__publish_date'\
+            'article__bigv_id', 'article__title', 'article__content', 'article__publish_date'\
             , 'article__article_source', 'bigv__name', 'bigv__words_weight').order_by('-article__publish_date')})
         
         context_data.update({'data': data})
+        object_list = context_data.get('object_list')
+        cache_options(map(lambda x: x.article.id, object_list.only('article__id')), self.request.wechatuser)
         return context_data
-    
+
 
 class ArticleListForSelectView(ListView):
     model = ArticlePostedResults

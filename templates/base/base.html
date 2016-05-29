@@ -11,12 +11,62 @@
         {% block css %}
         {% endblock %}
     </head>
-    <body>
+    <body class="{% block body_css %}{% endblock %}">
     {% block content %}
     {% endblock %}
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/jquery-weui.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+    	$(".weui_cells").on('click','.t', function(){
+    		var id = $(this).attr('id');
+    		$.get("{% url 'article_judge' %}",{'id': id}, function(data){
+    			$("#judgement").html(data);
+    			$("#mask").show();
+    			$("body").css({overflow:"hidden"});
+    		});
+    	});
+    	showMsg = function(title, content){
+    		$.notification({
+                title: title,
+                text: content,
+                time: 2000
+            });
+    	}
+    	$("body").on('click', '.follow', function(){
+            var bigv_id = $(this).attr('title');
+            var handler = $(this);
+            $.get("{% url 'follow' %}", {'openid': '{{ request.wechatuser.openid }}', 'bigv_id': bigv_id}, function(data){
+                if(data.res){
+                    $(handler).text("已关注");
+                    $(handler).removeClass('weui_btn_plain_primary').addClass('weui_btn_plain_default');
+                    $(handler).removeClass('follow').addClass('unfollow');
+                }else{
+                    showMsg("提示", "关注失败！");
+                }
+                
+            })
+        });
+        $("body").on('click', '.unfollow', function(){
+            var bigv_id = $(this).attr('title');
+            var handler = $(this);
+            $.get("{% url 'unfollow' %}", {'openid': '{{ request.wechatuser.openid }}', 'bigv_id': bigv_id}, function(data){
+                if(data.res){
+                    $(handler).text("+关注");
+                    $(handler).removeClass('weui_btn_plain_default').addClass('weui_btn_plain_primary');
+                    $(handler).removeClass('unfollow').addClass('follow');
+                }else{
+                    showMsg("提示", "取消关注失败！");
+                }
+                
+            })
+            
+        });
+    });
+    </script>
     {% block js %}
     {% endblock %}
+    <div id="judgement"></div>
+    <div id="mask"></div>
     </body>
 </html>

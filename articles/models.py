@@ -2,14 +2,22 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.template.defaultfilters import striptags
+from django.core.cache import cache
 
 from common.constants import ARTICLE_CATEGORY_CHOICES, ARTICLE_IS_CORRECT_CHOICES\
-, ARTICLE_EMOTION_LEVEL_CHOICES, ARTICLE_PERIOD_CHOICES, ARTICLE_STATUS_CHOICES
+, ARTICLE_EMOTION_LEVEL_CHOICES, ARTICLE_PERIOD_CHOICES, ARTICLE_STATUS_CHOICES, JUDGEMENT_JUDGE_CHOICES, \
+    ARTICLE_COMMENTS_KEY, ARTICLE_JUDGEMENT_RIGHT_KEY, \
+    ARTICLE_JUDGEMENT_WRONG_KEY, ARTICLE_IS_JUDGEMENT_CHOICES, \
+    ARTICLE_JUDGEMENT_CALENDAR_KEY, BIGVS_ALL_KEY
 from bigvs.models import BigVs
+from common.modelUtils import TimestampMixin
+from wechat.models import WechatUser, Comment
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 class ArticleActiveManager(models.Manager):
     def get_queryset(self):
-        return super(ArticleActiveManager, self).get_queryset().filter(article_status__in=(2, 3))
+        return super(ArticleActiveManager, self).get_queryset().filter(article_status__in=(-2, 1, 2, 3))
 
 
 class ArticlePostedResults(models.Model):
@@ -39,8 +47,11 @@ class ArticlePostedResults(models.Model):
     period = models.IntegerField(_(u'周期'), blank=True, null=True, choices=ARTICLE_PERIOD_CHOICES)
     article_status = models.IntegerField(_(u'状态'), blank=True, null=True, choices=ARTICLE_STATUS_CHOICES)
     comment = models.CharField(_(u'描述'), max_length=45, blank=True, null=True)
-    active_objects = ArticleActiveManager()
+    score = models.DecimalField(_(u'分数'), max_digits=5, decimal_places=2)
+    is_judgement = models.IntegerField(_(u'是否判断'), blank=True, null=True, choices=ARTICLE_IS_JUDGEMENT_CHOICES)
     objects = models.Manager()
+    active_objects = ArticleActiveManager()
+    comments = GenericRelation(Comment, related_query_name='articles')
     
     class Meta:
         managed = False
@@ -55,3 +66,53 @@ class ArticlePostedResults(models.Model):
     def get_absolute_url(self):
         return ('article_item', None, {'pk': self.id})
     
+    def bigv_dict(self):
+        res = cache.get(BIGVS_ALL_KEY)
+        if res is None:
+            return self.bigv
+        return res.get(self.bigv_id)
+    
+    def comments_count(self):
+        res = cache.get(ARTICLE_COMMENTS_KEY)
+        if res is None:
+            return self.comments.count()
+        return res.get(self.id, '')
+    
+    def judgement_right(self):
+        res = cache.get(ARTICLE_JUDGEMENT_RIGHT_KEY)
+        if res is None:
+            return self.judgement_set.filter(judge='right').count()
+        return res.get(self.id, '')
+    
+    def judgement_wrong(self):
+        res = cache.get(ARTICLE_JUDGEMENT_WRONG_KEY)
+        if res is None:
+            return self.judgement_set.filter(judge='wrong').count()
+        return res.get(self.id, '')
+    
+    def judgement_calendar(self):
+        res = cache.get(ARTICLE_JUDGEMENT_CALENDAR_KEY)
+        if res is None:
+            return self.judgement_set.filter(judge__isnull=True).count()
+        count = res.get(self.id, '')
+        if count:
+            return u'<b>{0}</b>人加入日历'.format(count)
+        return count
+
+
+class Judgement(TimestampMixin):
+    wechatuser = models.ForeignKey(WechatUser, verbose_name=_(u'微信用户'))
+    hint_text = models.TextField(_(u'提示文字'), null=True, blank=True)
+    remind_date = models.DateField(_(u'提醒日期'), null=True, blank=True)
+    judge = models.CharField(_(u'判断'), max_length=16, choices=JUDGEMENT_JUDGE_CHOICES, null=True, blank=True)
+    judge_datetime = models.DateTimeField(_(u'判断日期'), null=True, blank=True)
+    article = models.ForeignKey(ArticlePostedResults, verbose_name=_(u'文章'))
+    
+    def __unicode(self):
+        return _(u'{0}对{1}的判断'.format(self.wechatuser.name, self.article.title))
+    
+    class Meta:
+        verbose_name = verbose_name_plural = _(u'判断')
+        unique_together = ('wechatuser', 'article')
+        db_table = 'wechat_judgement'
+

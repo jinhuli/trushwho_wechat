@@ -1,0 +1,42 @@
+{% load article_filters %}
+<div class="{{ article.id }}">
+{% with judge=article.id|judge_date:request.wechatuser.openid %}
+{% if token == 'judge' %}
+<div class="judge_action">
+验证日 {{ judge.remind_date }}
+<a class="del" title="{{ judge.id }}"></a>
+</div>
+{% endif %}
+<div class="weui_cell">
+    <div class="weui_cell_hd">
+        <a href="{% url 'bigvs_detail' article.bigv_id %}"><img src="/static/images/bv.png" alt="icon" style=""></a>
+    </div>
+    <div class="weui_cell_bd weui_cell_primary">
+        <div class="cell_title">
+          <a href="{% url 'bigvs_detail' article.bigv_id %}">{{ article.bigv_dict.name }}</a>
+          <span>{{ article.bigv_dict.words_weight|default:"??" }}</span>
+        </div>
+        <div class="cell_bottom">{{ article.publish_date|date:'m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
+    </div>
+    <div class="weui_cell_ft">
+        <div class="t{{ article.id|judge_status_css:request.wechatuser.openid }}" href="javascript:;" id="{{ article.id }}"></div>
+    </div>
+</div>
+<a class="weui_cell weui_cells_access content" href="{{ article.get_absolute_url }}">
+    <div class="weui_cell_hd">
+    </div>
+    <div class="weui_cell_bd weui_cell_primary">
+        <div class="cell_title">
+          {{ article.title|default_if_none:''|truncatechars:20 }}
+        </div>
+        <div class="cell_desc">{{ article.content|markdown|striptags|truncatechars:80 }}</div>
+        <div class="cell_bottom">来自{{ article.article_source }}
+            <span class="comment">{{ article.comments_count }}</span><span class="wrong">{{ article.judgement_wrong }}</span><span class="right">{{ article.judgement_right }}</span>
+        </div> 
+        {% if token == 'judge' and judge.hint_text %}
+        <div class="judge_hint">{{ judge.hint_text }}</div>
+        {% endif %}
+    </div>
+</a>
+{% endwith %}
+</div>

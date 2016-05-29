@@ -33,6 +33,7 @@ SECRET_KEY = '5o6bn-lljhwz#m6od%8y5ipq#@wi_7_81165j0*-kzbd85@(oa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+WECHATDEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -48,6 +49,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'debug_toolbar',
+    'djcelery',
+    'django_extensions',
+    'markdown_deux',
     'common',
     'bigvs',
     'articles',
@@ -68,6 +72,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'common.middleware.WechatUserMiddleWare',
+    'common.middleware.RecordEventMiddleWare',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 INTERNAL_IPS = ('127.0.0.1',)
@@ -148,6 +154,7 @@ CACHES = {
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 CUBES_REDIS_TIMEOUT = 60 * 60
 NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
+SITE_REDIS_TIMEOUT = 60
 
 
 # Internationalization
@@ -172,30 +179,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     get_abs('static'),
 )
-
-# django_sult config
-SUIT_CONFIG = {
-    'ADMIN_NAME': '信谁微信后台管理',
-    
-    'MENU_ICONS': {
-        'sites': 'icon-leaf',
-    },
-        
-    'MENU': (
-        'sites',
-        # Rename app and set icon
-        {'app': 'wechat', 'label': _(u'微信用户管理'), 'icon':'icon-user'},
-        {'app': 'bigvs', 'label': _(u'大V管理'), 'icon':'icon-heart'},
-        {'app': 'articles', 'label': _(u'文章管理'), 'icon':'icon-list-alt'},
-        {'app': 'prediction', 'label': _(u'多空看板'), 'icon':'icon-calendar'},
-        {'app': 'feedback', 'label': _(u'意见反馈'), 'icon':'icon-edit'},
-        {'app': 'accessrecord', 'label': _(u'访问记录'), 'icon':'icon-list'},
-        {'label': _(u'系统用户设置'), 'icon': 'icon-cog', 'models': ('auth.user', 'auth.group')},
-    )
-    
-    
-}
-
 
 LOGGING = {
     'version': 1,
@@ -222,8 +205,13 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': get_abs('debug.log'),
+            'filename': get_abs('logs/debug.log'),
             'formatter': 'verbose',
+        },
+        'console':{
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
         },
     },
     'loggers': {
@@ -233,13 +221,58 @@ LOGGING = {
             'propagate': True,
         },
         'debug': {
-            'handlers': ['file'],
+            'handlers': ['file', 'console'],
             'level': 'INFO',
         }
     }
+}
+
+# django_sult config
+SUIT_CONFIG = {
+    'ADMIN_NAME': '信谁微信后台管理',
+    
+    'MENU_ICONS': {
+        'sites': 'icon-leaf',
+    },
+        
+    'MENU': (
+        'sites',
+        # Rename app and set icon
+        {'app': 'wechat', 'label': _(u'微信管理'), 'icon':'icon-user'},
+        {'app': 'bigvs', 'label': _(u'大V管理'), 'icon':'icon-heart'},
+        {'app': 'articles', 'label': _(u'文章管理'), 'icon':'icon-list-alt'},
+        {'app': 'prediction', 'label': _(u'多空看板'), 'icon':'icon-calendar'},
+        {'app': 'feedback', 'label': _(u'意见反馈'), 'icon':'icon-edit'},
+        {'app': 'accessrecord', 'label': _(u'访问记录'), 'icon':'icon-list'},
+        {'app': 'djcelery', 'label': _(u'定时任务'), 'icon':'icon-bell'},
+        {'label': _(u'系统用户设置'), 'icon': 'icon-cog', 'models': ('auth.user', 'auth.group')},
+    )
+    
+    
 }
 
 # 微信公众号配置
 WECHAT_APPID = 'wx9eba0081228e07ec'
 WECHAT_APPSECRET = 'ac665808a72856f499e11c37a293dce0'
 WECHAT_TOKEN = 'B0quTechWebchat'
+
+# djcelery+broker配置
+BROKER_URL = 'redis://:redis7890@127.0.0.1:6379/1'
+CELERY_RESULT_BACKEND = 'redis'
+REDIS_CONNECT_RETRY = True
+CELERY_TASK_RESULT_EXPIRES = 10
+BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+import djcelery
+djcelery.setup_loader()
+
+SOUTH_MIGRATION_MODULES = {
+    'djcelery': 'djcelery.south_migrations',
+}
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+CELERY_TIMEZONE = TIME_ZONE
+
+# shell_plus
+SHELL_PLUS_PRE_IMPORTS = (
+    ('articles.tasks', 'build_score'),
+)

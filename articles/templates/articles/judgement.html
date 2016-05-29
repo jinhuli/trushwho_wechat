@@ -1,0 +1,244 @@
+<style>
+.weui_cell, .weui_cell:before {
+  content: none;
+}
+#judgement .weui_tab {
+  border-radius: 15px;
+}
+#judgement .weui_cells {
+  background-color: #FFF;
+  text-align: center;
+}
+#judgement .weui_cell {
+  line-height: 40px;
+  border-bottom: 1px solid #D9D9D9;
+}
+#judgement #verify .weui_btn {
+  width: 86px;
+  height: 86px;
+  border-radius: 15px;
+  border:1px solid #D9D9D9;
+  background-size: 40px 33px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+#judgement #verify .weui_btn::after {
+  content: none;
+}
+#judgement #verify .weui_btn.right {
+  background-image: url(/static/images/right.png);
+}
+#judgement #verify .weui_btn.wrong {
+  background-image: url(/static/images/wrong.png);
+}
+#judgement #verify .weui_btn.right.checked {
+  background-image: url(/static/images/right_checked.png);
+}
+#judgement #verify .weui_btn.wrong.checked {
+  background-image: url(/static/images/wrong_checked.png);
+}
+#judgement .weui_btn.add {
+  width: 50%;
+  border: 1px solid #007ABB;
+  color: #007ABB;
+  background-color: #fff;
+}
+#judgement #verify .msg, #judgement .weui_input {
+  color: #007ABB;
+}
+#judgement #verify .msg {
+  display: none;
+}
+#judgement #verify .weui_icon_info_circle:before {
+  font-size: 17px;
+  color: #808080;
+}
+#judgement .weui_btn.added {
+  background-color: #C0C0C0;
+  color: #FFF;
+  width: 50%;
+}
+#judgement #verify .weui_btn.checked {
+  border: 1px solid #007ABB;
+  color: #007ABB;
+  background-color: #E6F1F7;
+}
+</style>
+<script type="text/javascript">
+$(document).ready(function(){
+	var article_id = $("#id_article").val();
+	var item = $("." + article_id);
+	$("#mask").click(function(){
+	    $("#judgement").html('');
+	    $("#mask").hide();
+	    $("body").css({overflow:"auto"});
+	});
+	setT = function(type){
+		var t = $("#" + article_id);
+		if(type == 0){
+			t.removeClass('t1');
+			t.removeClass('t2');
+		}else{
+			t.addClass('t' + type);
+		}
+	}
+	setO = function(type){
+		var count = item.find('.' + type);
+		var count_t = item.find('.' + type).text();
+        if(count_t){
+            count.text(parseInt(count_t) + 1);
+        }else{
+            count.text(1);
+        }
+	}
+	setO_sub = function(type){
+        var count = item.find('.' + type);
+        var count_t = parseInt(item.find('.' + type).text());
+        if(count_t > 0){
+            count.text(count_t - 1);
+        }else{
+            count.text('');
+        }
+    }
+	$(".weui_btn.add").click(function(){
+		var data = $('form').serialize();
+		var date = $("#id_remind_date").val();
+		if(date){
+			$.post('{% url "article_judge_add" %}', data, function(res){
+				if(res.status == 'ok'){
+					showMsg("提示", "加入日历成功！");
+					var count = item.find(".calendar b");
+					var count_t = count.text();
+					if(count && count_t){
+						count.text(parseInt(count_t) + 1);
+					}else{
+						item.find(".calendar").text('1人加入日历');
+					}
+					setT(1);
+				}else{
+					showMsg("错误", "加入日历失败！");
+				}
+			});
+		}else{
+			showMsg("警告", "验证日不能为空！");
+		}
+	});
+	$(".weui_btn.judge").click(function(){
+		var btn =$(this);
+		var data = $('form').serialize();
+		var right = $(this).hasClass('right');
+		if(right){
+			data = data + '&judge=right';
+		}else{
+			data = data + '&judge=wrong';
+		}
+		if(btn.hasClass('checked')){
+			$.post('{% url "article_judge_delete" %}', data, function(res){
+				if(res.status == 'ok'){
+	                btn.removeClass('checked');
+	                setTimeout("$('#mask').click()", 1000);
+	                setT(0);
+	                setO_sub(right?'right':'wrong');
+				}
+			});
+			return false;
+		}
+		$.post('{% url "article_judge_add" %}', data, function(res){
+            if(res.status == 'ok'){
+                
+                $(".msg").hide();
+                if(right){
+                	$(".msg.right").show();
+                	setO('right');
+                	if($(".weui_btn.judge.wrong").hasClass('checked')){
+                        setO_sub('wrong');
+                    }
+                }else{
+                	$(".msg.wrong").show();
+                	setO('wrong');
+                	if($(".weui_btn.judge.right").hasClass('checked')){
+                        setO_sub('right');
+                    }
+                }
+                setT(2);
+                $(".weui_btn.judge").removeClass('checked');
+                btn.addClass('checked');
+                setTimeout("$('#mask').click()", 1000);
+            }else{
+                showMsg("错误", "验证失败！");
+            }
+        });
+	});
+	{% if judgement %}
+	$(".weui_navbar_item.verify").click();
+	{% endif %}
+});
+</script>
+<div class="weui_tab">
+  <div class="weui_navbar">
+    <a class="weui_navbar_item weui_bar_item_on add" href="#add">
+      <span>加入日历</span>
+    </a>
+    <a class="weui_navbar_item verify" href="#verify">
+      <span>立即验证</span>
+    </a>
+  </div>
+  <div class="weui_tab_bd">
+  <form>
+  {% csrf_token %}
+    <div id="add" class="weui_tab_bd_item weui_tab_bd_item_active">
+	    <div class="weui_cells weui_cells_form">
+	      <div class="weui_cells_title">
+	      {% if judgement.judge %}
+	      取消验证结果，方可重新设置
+	      {% else %}
+	      还无法验证？设个提醒，让言论飞一会儿
+	      {% endif %}
+	      </div>
+	      <div class="weui_cell">
+		    <div class="weui_cell_hd"><label for="" class="weui_label">验证日</label></div>
+		    <div class="weui_cell_bd weui_cell_primary">
+		      <input{% if judgement.judge %} disabled="true"{% endif %} class="weui_input" type="date" value="{% if judgement %}{{ judgement.remind_date|date:'Y-m-d' }}{% else %}{% now 'Y-m-d' %}{% endif %}" placeholder="" name="remind_date" id="id_remind_date" min="{% now 'y-m-d' %}">
+		    </div>
+		  </div>
+		  <div class="weui_cell">
+		    <div class="weui_cell_bd weui_cell_primary">
+		      <textarea{% if judgement.judge %} disabled="true"{% endif %} class="weui_textarea" placeholder="为自己写点提示吧（可选）" rows="1" name="hint_text">{{ judgement.hint_text }}</textarea>
+		    </div>
+		  </div>
+		  <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+            {% if judgement.judge %}
+            <a href="javascript:;" class="weui_btn weui_btn_default added">已进行验证</a>
+            {% else %}
+            <a href="javascript:;" class="weui_btn weui_btn_default add">加入验证日历</a>
+            {% endif %}
+            </div>
+          </div>
+        </div>
+        <input type="hidden" name="article" value="{{ aid }}" id="id_article">
+        <input type="hidden" name="wechatuser" value="{{ request.wechatuser.id }}">
+        <input type="hidden" name="id" value="{{ judgement.id }}">
+	</div>
+	</form>
+	<div id="verify" class="weui_tab_bd_item">
+	    <div class="weui_cells weui_cells_form">
+	      <div class="weui_cells_title"><i class="weui_icon_info_circle"></i>请根据市场真实数据理性判断</div>
+	      <div class="weui_cell">
+            <div class="weui_cell_bd weui_cell_primary">
+              <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default judge right{% if judgement.judge == 'right' %} checked{% endif %}"></a>
+              <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_default judge wrong{% if judgement.judge == 'wrong' %} checked{% endif %}" style="margin-left: 40px;"></a>
+              <p class="msg right">赞，TA的言值又涨了！</p>
+              <p class="msg wrong">啊哦，Ta的言值又跌了！</p>
+              {% if judgement.judge %}
+	              <p class="msg" style="display: block;">
+	              {% if judgement.judge == 'right' %}认为正确{% endif %}
+	              {% if judgement.judge == 'wrong' %}认为错误{% endif %}
+	              </p>
+              {% endif %}
+            </div>
+          </div>
+	    </div>
+	</div>
+  </div>
+</div>
