@@ -4,7 +4,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.contrib.contenttypes.models import ContentType
 from articles.models import ArticlePostedResults, Judgement
-from wechat.models import WechatUser_BigVs
+from wechat.models import WechatUser_BigVs, WechatUser
 from common.views import JSONListView, JSONView
 from articles.utils import cache_options, cache_bigv, CountPaginator
 from articles.forms import JudgementForm
@@ -146,7 +146,9 @@ class JudgementView(TemplateView):
 class JudgementCreateView(JSONView):
     def post(self, request, *args, **kwargs):
         data = request.POST.copy()
-        wechatuser_id = data.get('wechatuser')
+        openid = data.get('wechatuser')
+        wechatuser_id = WechatUser.objects.get(openid=openid)
+        data.update({'wechatuser_id': wechatuser_id})
         article_id = data.get('article')
         judge = data.get('judge', '')
         if judge:
