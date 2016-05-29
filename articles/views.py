@@ -148,7 +148,7 @@ class JudgementCreateView(JSONView):
         data = request.POST.copy()
         openid = data.get('wechatuser')
         wechatuser = WechatUser.objects.get(openid=openid)
-        data.update({'wechatuser_id': wechatuser.id})
+        data.update({'wechatuser': wechatuser.id})
         article_id = data.get('article')
         judge = data.get('judge', '')
         if judge:
