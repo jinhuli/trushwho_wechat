@@ -217,7 +217,7 @@ $(document).ready(function(){
           </div>
         </div>
         <input type="hidden" name="article" value="{{ aid }}" id="id_article">
-        <input type="hidden" name="wechatuser" value="{{ request.session.id }}">
+        <input type="hidden" name="wechatuser" value="{{ request.session.openid }}">
         <input type="hidden" name="id" value="{{ judgement.id }}">
 	</div>
 	</form>

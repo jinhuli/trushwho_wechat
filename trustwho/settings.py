@@ -35,6 +35,7 @@ SECRET_KEY = '5o6bn-lljhwz#m6od%8y5ipq#@wi_7_81165j0*-kzbd85@(oa'
 DEBUG = True
 WECHATDEBUG = False
 
+
 ALLOWED_HOSTS = []
 
 
