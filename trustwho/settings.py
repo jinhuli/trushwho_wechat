@@ -71,8 +71,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'common.middleware.WechatUserMiddleWare',
     'common.middleware.RecordEventMiddleWare',
+    'common.middleware.WechatUserMiddleWare',
+    
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 INTERNAL_IPS = ('127.0.0.1',)

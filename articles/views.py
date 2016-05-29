@@ -48,7 +48,7 @@ class ArticleListView(ListView):
         object_ids = map(lambda x: x.id, object_list)
         v_ids = list(set(map(lambda x: x.bigv_id, object_list)))
         cache_bigv(v_ids)
-        cache_options(object_ids, self.request.wechatuser)
+        cache_options(object_ids, self.request.session['openid'])
         return context
 
     
@@ -69,7 +69,7 @@ class ArticleDetailView(DetailView):
             comments = self.object.comments.select_related().only('content', 'created_datetime', 'wechatuser__nickname', 'wechatuser__headimgurl')
             context_data.update({'comments': comments})
         context_data.update({'is_comments': is_comments})
-        cache_options([self.object.id], self.request.wechatuser)
+        cache_options([self.object.id], self.request.wechatuser.openid)
         return context_data
         
 
@@ -95,7 +95,7 @@ class ArticleListForBigvView(ListView):
         context = super(ArticleListForBigvView, self).get_context_data()
         object_list = list(context.get('object_list').only('id'))
         object_ids = map(lambda x: x.id, object_list)
-        cache_options(object_ids, self.request.wechatuser)
+        cache_options(object_ids, self.request.session['openid'])
         data = self.request.GET.copy()
         token = data.get('token')
         context.update({'token': token})
@@ -136,7 +136,7 @@ class JudgementView(TemplateView):
         aid = self.request.GET.get('id', '')
         context_data.update({'aid': aid})
         try:
-            judgement = Judgement.objects.get(wechatuser=self.request.wechatuser, article__id=aid)
+            judgement = Judgement.objects.get(wechatuser__openid=self.request.session['openid'], article__id=aid)
             context_data.update({'judgement': judgement})
         except Judgement.DoesNotExist:
             pass
@@ -192,7 +192,7 @@ class MineJudgementListView(ListView):
         now = datetime.datetime.now()
         data = self.request.GET.copy()
         jtype = data.get('jtype', 'due')
-        queryset = Judgement.objects.filter(wechatuser=self.request.wechatuser)
+        queryset = Judgement.objects.filter(wechatuser__openid=self.request.session['openid'])
         if jtype == 'due':
             queryset = queryset.filter(remind_date__lte=now.date(), judge__isnull=True).order_by('remind_date')
         elif jtype == 'no_due':
@@ -208,7 +208,7 @@ class MineJudgementListView(ListView):
         object_list = ArticlePostedResults.active_objects.filter(id__in=object_ids).only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'score')
         v_ids = list(set(map(lambda x: x.bigv_id, object_list)))
         cache_bigv(v_ids)
-        cache_options(object_ids, self.request.wechatuser)
+        cache_options(object_ids, self.request.session['openid'])
         context.update({'object_list': object_list})
         context.update({'token': 'judge'})
         data = self.request.GET.copy()

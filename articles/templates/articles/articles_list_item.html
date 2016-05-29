@@ -1,6 +1,6 @@
 {% load article_filters %}
 <div class="{{ article.id }}">
-{% with judge=article.id|judge_date:request.wechatuser.openid %}
+{% with judge=article.id|judge_date:request.session.openid %}
 {% if token == 'judge' %}
 <div class="judge_action">
 验证日 {{ judge.remind_date }}
@@ -19,7 +19,7 @@
         <div class="cell_bottom">{{ article.publish_date|date:'m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
     </div>
     <div class="weui_cell_ft">
-        <div class="t{{ article.id|judge_status_css:request.wechatuser.openid }}" href="javascript:;" id="{{ article.id }}"></div>
+        <div class="t{{ article.id|judge_status_css:request.session.openid }}" href="javascript:;" id="{{ article.id }}"></div>
     </div>
 </div>
 <a class="weui_cell weui_cells_access content" href="{{ article.get_absolute_url }}">

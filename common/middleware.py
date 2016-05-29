@@ -15,10 +15,10 @@ from wechat.models import WechatUser
 class RecordEventMiddleWare(object):
     def process_response(self, request, response):
         path = request.path
-        if '/admin/' not in path and hasattr(request, 'wechatuser'):
+        if '/admin/' not in path and 'openid' in request.session:
             data = request.GET.copy()
             keyword = data.get('q', '')
-            openid = request.wechatuser.openid
+            openid = request.session['openid']
             app = path.strip('/').split('/')[0]
             ip = request.META['REMOTE_ADDR']
             AccessRecord.objects.create(openid=openid, record=path, ip=ip, type=app, keyword=keyword)
@@ -37,10 +37,12 @@ class WechatUserMiddleWare(object):
             if openid:
                 wechatuser, _ = WechatUser.objects.get_or_create(openid=openid)
                 request.wechatuser = wechatuser
+                request.session['openid'] = openid
         if self.debug:
             openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
             wechatuser, _ = WechatUser.objects.get_or_create(openid=openid)
             request.wechatuser = wechatuser
+            request.session['openid'] = openid
     
     def process_view(self, request, view_func, view_args, view_kwargs):
         if self.debug:

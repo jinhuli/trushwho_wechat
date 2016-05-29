@@ -86,7 +86,7 @@ class BigvDetailView(DetailView):
         obj = kwargs.get('object')
         followers = WechatUser_BigVs.objects.filter(bigvs_id=obj.id).count()
         is_follow = WechatUser_BigVs.objects.filter(wechatuser=self.request.wechatuser, bigvs_id=obj.id)
-        articles = ArticlePostedResults.objects.filter(bigv_id=obj.v_id).count()
+        articles = ArticlePostedResults.active_objects.filter(bigv_id=obj.v_id).count()
         context.update({'followers': followers, 'articles': articles, 'is_follow':is_follow})
         return context
     
