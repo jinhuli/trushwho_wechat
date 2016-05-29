@@ -147,15 +147,15 @@ class JudgementCreateView(JSONView):
     def post(self, request, *args, **kwargs):
         data = request.POST.copy()
         openid = data.get('wechatuser')
-        wechatuser_id = WechatUser.objects.get(openid=openid)
-        data.update({'wechatuser_id': wechatuser_id})
+        wechatuser = WechatUser.objects.get(openid=openid)
+        data.update({'wechatuser_id': wechatuser.id})
         article_id = data.get('article')
         judge = data.get('judge', '')
         if judge:
             data.update({'judge_datetime': datetime.datetime.now()})
             data.update({'remind_date': datetime.datetime.now().date()})
         try:
-            instance = Judgement.objects.get(wechatuser__id=wechatuser_id, article__id=article_id)
+            instance = Judgement.objects.get(wechatuser__id=wechatuser.id, article__id=article_id)
         except Judgement.DoesNotExist:
             instance = None
         form = JudgementForm(data, instance=instance)
