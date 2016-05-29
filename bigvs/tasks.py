@@ -58,7 +58,7 @@ def build_pinyin_for_name():
     
 
 @task
-def cache_bigv():
+def cache_bigv_():
     st = time.time()
     bigvs = BigVs.objects.values('v_id', 'name', 'words_weight')
     res = {}

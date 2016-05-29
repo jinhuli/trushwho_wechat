@@ -15,10 +15,10 @@ from wechat.models import WechatUser
 class RecordEventMiddleWare(object):
     def process_response(self, request, response):
         path = request.path
-        if '/admin/' not in path:
+        if '/admin/' not in path and hasattr(request, 'wechatuser'):
             data = request.GET.copy()
             keyword = data.get('q', '')
-            openid = request.session['openid']
+            openid = request.wechatuser.openid
             app = path.strip('/').split('/')[0]
             ip = request.META['REMOTE_ADDR']
             AccessRecord.objects.create(openid=openid, record=path, ip=ip, type=app, keyword=keyword)

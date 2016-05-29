@@ -33,7 +33,7 @@ def build_score():
     
     
 @task
-def count_comments():
+def count_comments_():
     st = time.time()
     queryset = ArticlePostedResults.active_objects.all()
     print queryset.count()

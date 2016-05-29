@@ -51,7 +51,6 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'djcelery',
     'django_extensions',
-    'markdown_deux',
     'common',
     'bigvs',
     'articles',
