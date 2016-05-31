@@ -12,5 +12,3 @@ class FeedBackForm(forms.ModelForm):
     class Meta:
         model = FeedBack
         fields = '__all__'
-    
-    

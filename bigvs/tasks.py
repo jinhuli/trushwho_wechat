@@ -10,7 +10,7 @@ from celery import task
 from xpinyin import Pinyin
 from multiprocessing.dummy import Pool
 
-from articles.models import ArticlePostedResults
+from articles.models import ArticlePostedResults, Judgement
 from bigvs.models import BigVs
 from common.utils import debug
 from common.constants import BIGVS_ALL_KEY
@@ -23,15 +23,24 @@ def build_words_weight():
     bigvs = BigVs.objects.all()
     def _build(b):
         data = ArticlePostedResults.active_objects.filter(bigv__v_id=b.v_id, is_correct__in=(0, 1)).values('is_correct').annotate(count=Count('is_correct')).order_by('is_correct')
-        sum_words , w, c = 0, 0, 0
+        sum_c , w, c = 0, 0, 0
         for d in data:
             if d['is_correct'] == 1:
                 c = d['count']
-            sum_words += d['count']
-        if sum_words:
-            w = int(round(c * 1.0 / sum_words * 100)) 
+            sum_c += d['count']
+#         w = int(round(c * 1.0 / sum_c))
+#         c = w * 200
+#         sum_c = 200
+        data = Judgement.objects.filter(article__bigv=b, judge__isnull=False).values('judge').annotate(count=Count('judge')).order_by('judge')
+        for d in data:
+            if d['judge'] == 'right':
+                c += d['count']
+            sum_c += d['count']
+        if sum_c:
+            w = int(round(c * 1.0 / sum_c * 100))
             b.words_weight = w
             b.save()
+        print b.name, c, sum_c, w
     pool = Pool(8)
     pool.map(_build, bigvs)
     pool.close()

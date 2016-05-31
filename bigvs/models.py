@@ -14,7 +14,9 @@ class BigVs(models.Model):
     pinyin = models.CharField(_(u'拼音'), max_length=256, blank=True, null=True)
     isdefault = models.IntegerField(_(u'名称类型'), blank=True, null=True, choices=BIGVS_IS_DEFAULT_CHOICES)
     words_weight = models.IntegerField(_(u'言值'), blank=True, null=True)
-    brief = models.TextField(_(u'简介'), blank=True, null=True)
+    brief = models.TextField(_(u'概要'), blank=True, null=True)
+    introduction = models.TextField(_(u'简介'), blank=True, null=True)
+    headimg = models.ImageField(_(u'头像'), blank=True, null=True)
  
     class Meta:
         managed = False

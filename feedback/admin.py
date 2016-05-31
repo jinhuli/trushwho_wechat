@@ -5,5 +5,6 @@ from feedback.models import FeedBack
 
 @admin.register(FeedBack)
 class FeedBackAdmin(admin.ModelAdmin):
-    list_display = ['wechatuser', 'email', 'phone_number', 'content']
+    list_display = ['wechatuser', 'email', 'phone_number', 'ftype', 'content']
     search_fields = ['wecharuser__nickname', ]
+    list_filter = ['ftype', ]

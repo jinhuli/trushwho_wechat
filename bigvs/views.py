@@ -2,7 +2,7 @@
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.http.response import JsonResponse
-from django.db.models import Q
+from django.db.models import Q, Count
 
 from common.views import WeChatView, JSONListView
 from bigvs.models import BigVs
@@ -86,8 +86,10 @@ class BigvDetailView(DetailView):
         obj = kwargs.get('object')
         followers = WechatUser_BigVs.objects.filter(bigvs_id=obj.id).count()
         is_follow = WechatUser_BigVs.objects.filter(wechatuser=self.request.wechatuser, bigvs_id=obj.id)
-        articles = ArticlePostedResults.active_objects.filter(bigv_id=obj.v_id).count()
-        context.update({'followers': followers, 'articles': articles, 'is_follow':is_follow})
+        articles = ArticlePostedResults.active_objects.filter(bigv_id=obj.v_id)
+        article_source = articles.values('article_source').annotate(count=Count('article_source')).order_by('article_source')
+        context.update({'followers': followers, 'articles': articles.count(), 'is_follow':is_follow\
+                        , 'article_source':article_source})
         return context
     
     

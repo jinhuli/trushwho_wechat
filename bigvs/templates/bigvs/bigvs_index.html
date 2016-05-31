@@ -46,13 +46,17 @@
            正在加载...
         </div>
         <div class="empty_hint v">
+        {% if q %}
+        没有找到对应的大V
+        {% else %} 
             <p>
             您还没有关注任何大V，点击<br/>
             全部大V去关注吧
             </p>
             <br/><br/><br/><br/>
             没有感兴趣的大V？<br/>
-            <a class="weui_btn weui_btn_primary" style="margin-top: 50px; width: 80%;">推荐大V</a>
+        {% endif %}
+            <a href="{% url 'feedback'%}?ftype=1 " class="weui_btn weui_btn_plain_primary" style="margin-top: 50px; width: 80%;">推荐大V</a>
         </div>
         
     </div>

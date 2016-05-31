@@ -8,6 +8,11 @@
 <form action="" method="post">
 {% csrf_token %}
 <div class="weui_cells weui_cells_form">
+    <div class="weui_cell type">
+        <div class="weui_cell_bd weui_cell_primary">
+            <input class="weui_input"  type="text" id='picker' placeholder="请选择反馈类型" name="ftype"/>
+        </div>
+    </div>
     <div class="weui_cell">
         <div class="weui_cell_bd weui_cell_primary">
             <input class="weui_input" type="tel" placeholder="手机号" name="phone_number" id="id_phone_number" maxlength="11">
@@ -15,6 +20,7 @@
     </div>
     <div class="weui_cell">
         <div class="weui_cell_bd weui_cell_primary">
+            {{ form.email.errors }}
             <input class="weui_input" type="email" placeholder="邮箱" name="email" id="id_email">
         </div>
     </div>
@@ -25,7 +31,7 @@
     </div>
     <input type="hidden" name="wechatuser" value="{{ request.wechatuser.id }}">
 </div>
-<a class="weui_btn weui_btn_primary" style="margin-top: 150px;">提交</a>
+<a class="weui_btn weui_btn_plain_primary" style="margin-top: 150px;">提交</a>
 </form>
 {% endblock %} 
 
@@ -34,6 +40,14 @@
 .weui_btn {
   width: 80%;
 }
+.type .weui_btn {
+  width: 160px;
+}
+ul.errorlist {
+  color: #FF0000;
+  font-size: 12px;
+  list-style: none;
+}
 </style>
 {% endblock %}
 
@@ -41,8 +55,13 @@
 <script type="text/javascript">
     $(document).ready(function(){
     	$(".weui_btn").click(function(){
+    		var ftype = $("#picker").val();
     		var phone_number = $("#id_phone_number").val();
     		var email = $("#id_email").val();
+    		if(!ftype){
+    			showMsg("警告", "反馈类型不能为空！");
+    			return false;
+    		}
     		if(!(phone_number||email)){
     			showMsg("警告", "手机号或邮箱至少一项不能为空！");
     			return false;
@@ -65,8 +84,29 @@
                 showMsg("警告", "反馈内容不能为空！");
                 return false;
             }
+    		$("#picker").val($("#picker").attr('data-values'));
     		$("form").submit();
     	});
+    	$("#picker").select({
+   		  title: "请选择反馈类型",
+	      items: [
+	              {'value': 0, 'title':'问题反馈'},
+	              {'value': 1, 'title':'推荐大V'},
+	              {'value': 2, 'title':'其他'}
+	      ],
+	      closeText: "确定",
+	      onChange: function(){
+	    	  if($("#picker").attr('data-values') == 1){
+	    		  $("#id_content").attr('placeholder', '请输入推荐大V的名称、所在平台、主页地址。')
+	    	  }else{
+	    		  $("#id_content").attr('placeholder', '请输入您对信谁的反馈意见')
+	    	  }
+	      }
+   		});
+    	if({{ ftype }} == 1){
+    		$("#picker").attr('data-values', 1);
+            $("#picker").val('推荐大V');
+    	}
     });
 </script>
 {% endblock %}

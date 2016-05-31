@@ -17,7 +17,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 class ArticleActiveManager(models.Manager):
     def get_queryset(self):
-        return super(ArticleActiveManager, self).get_queryset().filter(article_status__in=(-2, 1, 2, 3))
+        return super(ArticleActiveManager, self).get_queryset().filter(article_status__in=(-2, 2, 3))
 
 
 class ArticlePostedResults(models.Model):

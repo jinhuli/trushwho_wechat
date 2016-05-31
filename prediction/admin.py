@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.utils.translation import gettext_lazy as _
 
-from prediction.models import Prediction, PredictionBigvs
+from prediction.models import Prediction, PredictionBigvs, Subscribe
 from prediction.forms import PredictionForm
 from bigvs.models import BigVs
 from articles.models import ArticlePostedResults
@@ -50,3 +50,11 @@ class PredictionBigvsAdmin(admin.ModelAdmin):
     list_display = ['bigv', 'created_datetime']
     search_fields = ['bigv__name', 'bigv__v_id']
     raw_id_fields = ['bigv', ]
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = ['wechatuser', 'status', 'modified_datetime', 'post_datetime']
+    search_fields = ['wechatuser__openid', 'wechatuser__nickname']
+    raw_id_fields = ['wechatuser', ]
+    list_filter = ['status', ]

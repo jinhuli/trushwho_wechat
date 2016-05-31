@@ -120,3 +120,13 @@ ACCESSRECORD_TYPE_CHOICES = (
     ('user', _(u'用户操作')),
 )
 
+SUBSCRIBE_STATUS_CHOICES = (
+    ('subscribe', _(u'已订阅')),
+    ('cancel', _(u'已取消')),
+)
+
+FEDBACK_FTYPE_CHOICES = (
+    (0, _(u'问题反馈')),
+    (1, _(u'推荐大V')),
+    (2, _(u'其他')),
+)

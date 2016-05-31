@@ -4,7 +4,9 @@ from django.utils.translation import gettext_lazy as _
 
 from bigvs.models import BigVs
 from articles.models import ArticlePostedResults
-from common.constants import PREDICTION_VIEWPOINT_CHOICES
+from common.constants import PREDICTION_VIEWPOINT_CHOICES, SUBSCRIBE_STATUS_CHOICES
+from common.modelUtils import TimestampMixin
+from wechat.models import WechatUser
 
 class Prediction(models.Model):
     bigv = models.ForeignKey(BigVs, verbose_name=_(u'大V'))
@@ -26,3 +28,13 @@ class PredictionBigvs(models.Model):
     
     class Meta:
         verbose_name = verbose_name_plural = _(u'大V选择列表')
+        
+
+class Subscribe(TimestampMixin):
+    wechatuser = models.ForeignKey(WechatUser, verbose_name=_(u'微信用户'), unique=True)
+    status = models.CharField(_(u'订阅状态'), max_length=32, choices=SUBSCRIBE_STATUS_CHOICES, default='subscribe')
+    post_datetime = models.DateTimeField(_(u'推送时间'), null=True, blank=True)
+    
+    class Meta:
+        verbose_name = verbose_name_plural = _(u'订阅用户')
+    

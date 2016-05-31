@@ -6,6 +6,28 @@
 
 {% block content %}
 <div id="main"></div>
+<div class="actions">
+<a href="javascript:;" class="weui_btn weui_btn_plain_primary help" data-container="body" data-html="true" data-toggle="popover" data-placement="left" data-content="
+创新技术检索解析海量数据<br/>
+精选财经大咖言论<br/>
+第一时间追踪大v多空观点<br/>
+看大盘 短平快 稳准狠<br/>
+投资交易神助攻">帮助</a>
+
+<a href="javascript:;" class="weui_btn weui_btn_plain_primary subscribe">逃顶抄底</a>
+</div>
+<div class="subscribe_panel">
+<i class="weui_icon_clear"></i>
+深套山顶，持币谷底，谁之过？贪婪
+的人性还是媒体导向？<br/>
+大盘走势，大v怎么看，订阅逃顶抄
+底指南，落袋为安。
+{% if is_subscribe %}
+<a href="javascript:;" class="weui_btn weui_btn_plain_primary unsub">取消订阅</a>
+{% else %}
+<a href="javascript:;" class="weui_btn weui_btn_plain_primary sub">订阅</a>
+{% endif %}
+</div>
 <div class="weui_tab">
     <div class="weui_navbar">
         <a href="#rise" class="weui_navbar_item{% if token == 'all' or not token %} weui_bar_item_on{% endif %}">
@@ -34,7 +56,11 @@
 {% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css"/>
 <style>
+  .cell_title span {
+    width: 38px;
+  }
   #main{
     width: 280px;
     height: 280px;
@@ -43,11 +69,39 @@
   .weui_cell, .weui_cell:before {
     border-top: 1px solid #fff;
   }
+  .actions {
+    width: 80px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    }
+  .subscribe_panel {
+    width: 60%;
+    position: fixed;
+    top: 60px;
+    left: 20%;
+    z-index: 102;
+    text-align: center;
+    padding: 30px;
+    background-color: #FFF;
+    border-radius: 10px;
+    display: none;
+  }
+  .subscribe_panel a {
+    width: 50%;
+    margin-top: 50px;
+  }
+  .subscribe_panel .weui_icon_clear {
+    position: absolute;
+    right: -7px;
+    top: -13px;
+  }
 </style>
 {% endblock %}
 
 {% block js %}
 <script src="/static/js/echarts.common.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
     	// 基于准备好的dom，初始化echarts实例
@@ -83,6 +137,46 @@
             	$(".weui_navbar").css({'position':'absolute'});
             }
         });
+        $('.subscribe').click(function(){
+        	$(".subscribe_panel").show();
+        	$("#mask").show();
+        });
+        $('.weui_icon_clear').click(function(){
+            $(".subscribe_panel").hide();
+            $("#mask").hide();
+        });
+        $("#mask").click(function(){
+        	$('.weui_icon_clear').click();
+        });
+        $(".help").click(function(){
+        	$(this).popover();
+        });
+        $(function () { $("[data-toggle='popover']").popover(); });
+        $('.subscribe_panel').on('click', '.sub', function(){
+        	$.post('{% url "subscribe" %}', function(data){
+        		if(data.res == 'ok'){
+        			$(".sub").addClass('unsub');
+                    $(".sub").text('取消订阅');
+                    $(".sub").removeClass('sub');
+        		}else{
+        			showMsg('错误', '订阅失败');
+        		}
+        	});
+        });
+        $('.subscribe_panel').on('click', '.unsub', function(){
+            $.post('{% url "unsubscribe" %}', function(data){
+                if(data.res == 'ok'){
+                    $(".unsub").addClass('sub');
+                    $(".unsub").text('订阅');
+                    $(".unsub").removeClass('unsub');
+                }else{
+                    showMsg('错误', '取消订阅失败');
+                }
+            });
+        });
+        {% if not is_subscribe %}
+        $('.subscribe').click();
+        {% endif %}
     });
     
 </script>

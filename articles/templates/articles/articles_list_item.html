@@ -14,7 +14,7 @@
     <div class="weui_cell_bd weui_cell_primary">
         <div class="cell_title">
           <a href="{% url 'bigvs_detail' article.bigv_id %}">{{ article.bigv_dict.name }}</a>
-          <span>{{ article.bigv_dict.words_weight|default:"??" }}</span>
+          <span>{{ article.bigv_dict.words_weight|default:"待评" }}</span>
         </div>
         <div class="cell_bottom">{{ article.publish_date|date:'m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
     </div>

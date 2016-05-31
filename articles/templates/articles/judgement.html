@@ -39,9 +39,6 @@
 }
 #judgement .weui_btn.add {
   width: 50%;
-  border: 1px solid #007ABB;
-  color: #007ABB;
-  background-color: #fff;
 }
 #judgement #verify .msg, #judgement .weui_input {
   color: #007ABB;
@@ -211,7 +208,7 @@ $(document).ready(function(){
             {% if judgement.judge %}
             <a href="javascript:;" class="weui_btn weui_btn_default added">已进行验证</a>
             {% else %}
-            <a href="javascript:;" class="weui_btn weui_btn_default add">加入验证日历</a>
+            <a href="javascript:;" class="weui_btn weui_btn_plain_primary add">加入验证日历</a>
             {% endif %}
             </div>
           </div>

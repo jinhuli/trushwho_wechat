@@ -92,16 +92,16 @@ a.weui_grid {
       </div>
 	  <a href="javascript:;" class="weui_grid js_grid">
 	    <div class="weui_grid_icon">
-	      {{ obj.words_weight|default:"??" }}
+	      {{ obj.words_weight|default:"待评" }}
 	    </div>
 	    <p class="weui_grid_label">
 	      言值
 	    </p>
 	  </a>
-	  <div class="weui_grid js_grid" style="line-height: 40px;">
+	  <div class="weui_grid js_grid" style="line-height: 40px; width: 10%;">
         |
       </div>
-      <div class="weui_grid js_grid">
+      <div class="weui_grid js_grid" style="width: 30%;">
         {% if is_follow %}
         <a href="javascript:;" class="weui_btn weui_btn_plain_default unfollow" title="{{ obj.id }}">已关注</a>
         {% else %}
@@ -130,7 +130,7 @@ a.weui_grid {
 			  <div class="weui_panel_hd">背景介绍</div>
 			  <div class="weui_panel_bd">
 			    <div class="weui_media_box weui_media_text">
-			      <p class="weui_media_desc">美国哥伦比亚大学统计系，曾任南方证券行业研究员，广发证券投资总监，证券从业经历超过14年，曾获得2014有多少显示多少有多少显示多少有多少显示多少有多少显示多少曾获得2014有多少显示多少有</p>
+			      <p class="weui_media_desc">{{ obj.introduction }}</p>
 			    </div>
 			  </div>
 			</div>
@@ -138,8 +138,9 @@ a.weui_grid {
               <div class="weui_panel_hd">言论来源</div>
               <div class="weui_panel_bd">
                 <div class="weui_media_box weui_media_text">
-                  <p class="weui_media_desc">今日头条</p>
-                  <p class="weui_media_desc">今日头条</p>
+                {% for s in article_source %}
+                  <p class="weui_media_desc">{{ s.article_source }}({{ s.count }})</p>
+                {% endfor %}
                 </div>
               </div>
             </div>

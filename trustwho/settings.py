@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'djcelery',
     'django_extensions',
+    'flattext',
     'common',
     'bigvs',
     'articles',
@@ -242,10 +243,11 @@ SUIT_CONFIG = {
         {'app': 'wechat', 'label': _(u'微信管理'), 'icon':'icon-user'},
         {'app': 'bigvs', 'label': _(u'大V管理'), 'icon':'icon-heart'},
         {'app': 'articles', 'label': _(u'文章管理'), 'icon':'icon-list-alt'},
-        {'app': 'prediction', 'label': _(u'多空看板'), 'icon':'icon-calendar'},
+        {'app': 'prediction', 'label': _(u'大V风向'), 'icon':'icon-calendar'},
         {'app': 'feedback', 'label': _(u'意见反馈'), 'icon':'icon-edit'},
         {'app': 'accessrecord', 'label': _(u'访问记录'), 'icon':'icon-list'},
         {'app': 'djcelery', 'label': _(u'定时任务'), 'icon':'icon-bell'},
+        {'app': 'flattext', 'label': _(u'flattext'), 'icon':''},
         {'label': _(u'系统用户设置'), 'icon': 'icon-cog', 'models': ('auth.user', 'auth.group')},
     )
     
@@ -258,11 +260,10 @@ WECHAT_APPSECRET = 'ac665808a72856f499e11c37a293dce0'
 WECHAT_TOKEN = 'B0quTechWebchat'
 
 # djcelery+broker配置
-BROKER_URL = 'redis://:redis7890@127.0.0.1:6379/1'
-CELERY_RESULT_BACKEND = 'redis'
+BROKER_URL = 'redis://:redis7890@127.0.0.1:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:redis7890@127.0.0.1:6379/0'
 REDIS_CONNECT_RETRY = True
 CELERY_TASK_RESULT_EXPIRES = 10
-BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
 import djcelery
 djcelery.setup_loader()
 

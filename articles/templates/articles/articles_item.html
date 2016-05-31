@@ -17,7 +17,7 @@
 	    <div class="weui_cell_bd weui_cell_primary">
 	        <div class="cell_title">
 	          {{ obj.bigv.name }}
-	          <span>{{ obj.bigv.words_weight|default:"??" }}</span>
+	          <span>{{ obj.bigv.words_weight|default:"待评" }}</span>
 	        </div>
 	        <div class="cell_bottom">{{ obj.publish_date|date:'Y-m-d H:i' }} <div class='calendar'>{{ obj.judgement_calendar|safe }}</div></div>
 	    </div>

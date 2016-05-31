@@ -16,6 +16,8 @@ class WechatUserAdmin(admin.ModelAdmin):
     list_filter = ['sex', 'city', 'province', 'country']
     search_fields = ['openid', 'nickname']
     
+    date_hierarchy = 'created_datetime'
+    
     def headimg(self, obj):
         return u'<a href="{0}" target="_blank"><img src="{0}" title="{1}" width="40"/></a>'\
             .format(obj.headimgurl, obj.nickname)

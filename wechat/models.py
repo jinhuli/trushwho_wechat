@@ -21,8 +21,7 @@ from common.modelUtils import StatusMixin, TimestampMixin
 import datetime
 
 
-
-class WechatUser(models.Model):
+class WechatUser(TimestampMixin):
     openid = models.CharField(_(u'openid'), unique=True, max_length=45)
     nickname = models.CharField(_(u'昵称'), max_length=45, blank=True, null=True)
     sex = models.IntegerField(_(u'性别'), blank=True, null=True, choices=WECHAT_USER_SEX_CHOICES)
