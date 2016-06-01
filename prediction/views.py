@@ -30,11 +30,11 @@ class PredictionView(ListView):
             d.update({'name': dict(PREDICTION_VIEWPOINT_CHOICES)[d['viewpoint']].title()})
             d.update({'items': queryset.filter(viewpoint=d['viewpoint']).only(\
             'article__bigv_id', 'article__title', 'article__content', 'article__publish_date'\
-            , 'article__article_source', 'bigv__name', 'bigv__words_weight').order_by('-article__publish_date')})
+            , 'article__article_source', 'bigv__name', 'bigv__words_weight', 'article__is_correct').order_by('-article__publish_date')})
         
         context_data.update({'data': data})
         object_list = context_data.get('object_list').only('article__id', 'bigv__v_id')
-        cache_options(map(lambda x: x.article.id, object_list), self.request.wechatuser)
+        cache_options(map(lambda x: x.article.id, object_list), self.request.wechatuser.openid)
         v_ids = list(set(map(lambda x: x.bigv.v_id, object_list)))
         cache_bigv(v_ids)
         is_subscribe = Subscribe.objects.filter(wechatuser=self.request.wechatuser, status='subscribe').exists()

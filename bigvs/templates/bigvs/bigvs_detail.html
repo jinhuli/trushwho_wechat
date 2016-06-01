@@ -142,7 +142,7 @@ a.weui_grid {
 			  <div class="weui_panel_hd">背景介绍</div>
 			  <div class="weui_panel_bd">
 			    <div class="weui_media_box weui_media_text">
-			      <p class="weui_media_desc">{{ obj.introduction }}</p>
+			      <p class="weui_media_desc">{{ obj.introduction|default:'' }}</p>
 			    </div>
 			  </div>
 			</div>
@@ -225,6 +225,8 @@ a.weui_grid {
                 $(".weui_navbar").css({'position':'absolute'});
             }
         });
+        var referrer = document.referrer;
+        console.info(referrer);
     });
     </script>
 {% endblock %}

@@ -82,13 +82,23 @@ class ArticlePostedResults(models.Model):
         res = cache.get(ARTICLE_JUDGEMENT_RIGHT_KEY)
         if res is None:
             return self.judgement_set.filter(judge='right').count()
-        return res.get(self.id, '')
+        count = res.get(self.id)
+        z = self.is_correct == 1 and 1 or 0
+        if count:
+            return  count + z
+        else:
+            return z and z or ''
     
     def judgement_wrong(self):
         res = cache.get(ARTICLE_JUDGEMENT_WRONG_KEY)
         if res is None:
             return self.judgement_set.filter(judge='wrong').count()
-        return res.get(self.id, '')
+        count = res.get(self.id)
+        z = self.is_correct == 0 and 1 or 0
+        if count:
+            return  count + z
+        else:
+            return z and z or ''
     
     def judgement_calendar(self):
         res = cache.get(ARTICLE_JUDGEMENT_CALENDAR_KEY)

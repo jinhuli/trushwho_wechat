@@ -40,7 +40,7 @@ class ArticleListView(ListView):
         else:
             queryset = queryset.order_by('-score')
 
-        return queryset.only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'score')
+        return queryset.only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'score', 'is_correct')
     
     def get_context_data(self, **kwargs):
         context = super(ArticleListView, self).get_context_data()
@@ -58,7 +58,8 @@ class ArticleDetailView(DetailView):
     context_object_name = 'obj'
     
     def get_queryset(self):
-        return ArticlePostedResults.active_objects.select_related().only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'bigv__name', 'bigv__words_weight')
+        return ArticlePostedResults.active_objects.select_related().only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'bigv__name', 'bigv__words_weight'\
+                                                                         , 'bigv__headimg', 'bigv__initials', 'is_correct')
     
     def get_context_data(self, **kwargs):
         content_type = ContentType.objects.get_for_model(ArticlePostedResults).id
@@ -89,7 +90,7 @@ class ArticleListForBigvView(ListView):
             queryset = queryset.filter(is_judgement=1)
         else:
             queryset = queryset.filter(is_judgement=0)
-        return queryset.only('title', 'content', 'publish_date', 'article_source', 'score')
+        return queryset.only('title', 'content', 'publish_date', 'article_source', 'score', 'is_correct')
     
     def get_context_data(self, **kwargs):
         context = super(ArticleListForBigvView, self).get_context_data()
@@ -209,7 +210,7 @@ class MineJudgementListView(ListView):
         context = super(MineJudgementListView, self).get_context_data()
         object_list = list(context.get('object_list').only('article_id'))
         object_ids = map(lambda x: x.article_id, object_list)
-        object_list = ArticlePostedResults.active_objects.filter(id__in=object_ids).only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'score')
+        object_list = ArticlePostedResults.active_objects.filter(id__in=object_ids).only('bigv_id', 'title', 'content', 'publish_date', 'article_source', 'score', 'is_correct')
         v_ids = list(set(map(lambda x: x.bigv_id, object_list)))
         cache_bigv(v_ids)
         cache_options(object_ids, self.request.session['openid'])

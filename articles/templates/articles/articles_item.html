@@ -1,5 +1,5 @@
 {% extends "base/base.html" %}
-{% load article_filters %}
+{% load article_filters thumbnail %}
 
 {% block title %}
   {{ obj }}
@@ -12,7 +12,11 @@
   <div class="weui_cells">
 	<div class="weui_cell">
 	    <div class="weui_cell_hd">
-	        <img src="/static/images/bv.png" alt="icon" style="">
+	        {% if obj.bigv.headimg %}
+		        <img src="{{ obj.bigv.headimg|thumbnail_url:'avatar' }}"/>
+		    {% else %}
+		        <div class="headimg">{{ obj.bigv.initials|slice:":2" }}</div>
+		    {% endif %}
 	    </div>
 	    <div class="weui_cell_bd weui_cell_primary">
 	        <div class="cell_title">
@@ -71,7 +75,7 @@
 	<div class="weui_cells weui_cells_form form_label">
 	  <div class="weui_cell">
 	    <div class="weui_cell_bd weui_cell_primary">
-	      <input class="weui_input" type="text" placeholder="说点什么吧！也许你就是下一个V！">
+	      <input class="weui_input" type="text" placeholder="说点什么吧！也许你就是下一个V！" readonly="readonly">
 	    </div>
 	    <div class="weui_cell_bd">
         </div>

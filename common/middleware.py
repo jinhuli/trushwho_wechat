@@ -39,7 +39,7 @@ class WechatUserMiddleWare(object):
                 request.wechatuser = wechatuser
                 request.session['openid'] = openid
         if self.debug:
-            openid = 'ojhvmt8R8uQwkvR-tHzzy-M_rcvI'
+            openid = 'o8Ak0wUaEsdqRw4RO3_qK8Np-SoI'
             wechatuser, _ = WechatUser.objects.get_or_create(openid=openid)
             request.wechatuser = wechatuser
             request.session['openid'] = openid

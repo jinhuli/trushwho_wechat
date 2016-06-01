@@ -76,8 +76,10 @@ def get_userinfo(sender, instance, **kwargs):
                     v = datetime.datetime.fromtimestamp(v)
                 if hasattr(instance, k):
                     setattr(instance, k, v)
-            instance.save()
-            
+        else:
+            instance.nickname = ''
+        instance.save()
+        
 
 class Menu(StatusMixin):
     parent = models.ForeignKey('self', verbose_name=_(u'父级菜单'), null=True, blank=True, help_text=_(u'一级菜单数应为1~3个,二级菜单个数应为1~5个'))

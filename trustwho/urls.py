@@ -2,6 +2,7 @@ from django.conf import settings
 from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from django.views.generic.base import TemplateView
+from common.decorators import openid_exempt
 
 urlpatterns = [
     # Examples:
@@ -23,8 +24,8 @@ if settings.DEBUG:
     urlpatterns += patterns('',
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
-
+    from django.views.static import serve
     urlpatterns += patterns(
         '',
-        url(r'^files/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT})
+        url(r'^files/(?P<path>.*)$', openid_exempt(serve), {'document_root': settings.MEDIA_ROOT})
     )
