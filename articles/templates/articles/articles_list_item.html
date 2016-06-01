@@ -9,7 +9,13 @@
 {% endif %}
 <div class="weui_cell">
     <div class="weui_cell_hd">
-        <a href="{% url 'bigvs_detail' article.bigv_id %}"><img src="/static/images/bv.png" alt="icon" style=""></a>
+        <a href="{% url 'bigvs_detail' article.bigv_id %}">
+        {% if article.bigv_dict.headimg %}
+            <img src="{{ article.bigv_dict.headimg }}"/>
+        {% else %}
+            <div class="headimg">{{ article.bigv_dict.initials|slice:":2" }}</div>
+        {% endif %}
+        </a>
     </div>
     <div class="weui_cell_bd weui_cell_primary">
         <div class="cell_title">

@@ -194,3 +194,14 @@ article.weui_article {
 .empty_hint p {
   margin-top: 120px;
 }
+.headimg {
+  font-size: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #24A8F4;
+  color: #FFF;
+  text-align: center;
+  font-weight: bold;
+  line-height: 40px;
+}

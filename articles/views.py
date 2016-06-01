@@ -98,7 +98,9 @@ class ArticleListForBigvView(ListView):
         cache_options(object_ids, self.request.session['openid'])
         data = self.request.GET.copy()
         token = data.get('token')
+        page = data.get('page')
         context.update({'token': token})
+        context.update({'page': page})
         return context
     
 

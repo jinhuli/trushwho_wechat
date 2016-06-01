@@ -1,9 +1,10 @@
 {% load article_filters %}
 
+{% if page == '1' %}
 <div class="list_title">
 {% if token == 'judge' %}已{% else %}未{% endif %}判断 {{ paginator.count }}
 </div>
-
+{% endif %}
 {% for article in object_list %}
 <a class="weui_cell weui_cells_access content" href="{{ article.get_absolute_url }}">
     <div class="weui_cell_bd weui_cell_primary">

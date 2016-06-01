@@ -99,12 +99,13 @@ $(document).ready(function(){
             },
 		    success: function(data){
 			    $("#"+token+">.weui_cells").append(data);
-			    if($.trim(data) == ''){
-			    	showMsg("提示", "没有更多内容！");
-			    }
 		    },
 		    statusCode: {404: function() {
-		    	$('.v').show();
+		    	if($.trim($("#"+token+">.weui_cells").html()) == ''){
+		    	    $('.v').show();
+		    	}else{
+		    		showMsg("提示", "没有更多内容！");
+		    	}
 		    }},
 		    complete: function(){
 		    	loading = false;

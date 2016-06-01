@@ -1,7 +1,15 @@
+{% load thumbnail %}
+
 {% for obj in object_list.iterator %}
 <div class="weui_cell">
     <div class="weui_cell_hd">
-        <a href="{% url 'bigvs_detail' obj.v_id %}"><img src="/static/images/bv.png" alt="icon"></a>
+        <a href="{% url 'bigvs_detail' obj.v_id %}">
+        {% if obj.headimg %}
+            <img src="{{ obj.headimg|thumbnail_url:'avatar' }}"/>
+        {% else %}
+            <div class="headimg">{{ obj.initials|slice:":2" }}</div>
+        {% endif %}
+        </a>
     </div>
     <div class="weui_cell_bd weui_cell_primary">
         <div class="cell_title">

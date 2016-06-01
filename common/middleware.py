@@ -45,6 +45,7 @@ class WechatUserMiddleWare(object):
             request.session['openid'] = openid
     
     def process_view(self, request, view_func, view_args, view_kwargs):
+#         MicroMessenger
         if self.debug:
             return None
         if '/admin/' in request.path:
@@ -56,4 +57,4 @@ class WechatUserMiddleWare(object):
             sdk = WXSdk()
             redirect_url = sdk.oauth2_redirect_uri(url)
             return HttpResponseRedirect(redirect_url)
-
+        

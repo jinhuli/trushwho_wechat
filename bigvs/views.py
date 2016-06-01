@@ -19,7 +19,7 @@ class BigVsIndexView(WeChatView):
 class BigVsListView(ListView):
     model = BigVs
     paginate_by = 20
-    allow_empty = False
+    allow_empty = True
     template_name = 'bigvs/bigvs_list.html'
     
     def get_queryset(self):

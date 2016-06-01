@@ -16,7 +16,8 @@ class BigVs(models.Model):
     words_weight = models.IntegerField(_(u'言值'), blank=True, null=True)
     brief = models.TextField(_(u'概要'), blank=True, null=True)
     introduction = models.TextField(_(u'简介'), blank=True, null=True)
-    headimg = models.ImageField(_(u'头像'), blank=True, null=True)
+    headimg = models.ImageField(_(u'头像'), blank=True, null=True, upload_to='bigv')
+    initials = models.CharField(_(u'首字母'), max_length=64, blank=True, null=True)
  
     class Meta:
         managed = False

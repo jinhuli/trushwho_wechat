@@ -56,8 +56,9 @@ def build_pinyin_for_name():
     bigvs = BigVs.objects.filter(isdefault=0)
     p = Pinyin()
     def _build(bv):
-        if bv.name and not bv.pinyin:
+        if bv.name and not bv.initials:
             bv.pinyin = p.get_pinyin(bv.name, u'')
+            bv.initials = p.get_initials(bv.name, u'')
             bv.save()
     pool = Pool(8)
     pool.map(_build, bigvs)

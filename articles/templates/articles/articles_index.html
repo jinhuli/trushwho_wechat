@@ -35,7 +35,7 @@
           <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
         </div>
 		<div class="nav">
-		    验证数量超过{{ request.wechatuser.rank }}的用户
+		    验证数量超过{{ request.wechatuser.rank|default:"0%" }}的用户
 		    <a class="valid">已验证</a>
 		    <a class="no_due">未到期</a>
 		    <a class="due cur">可验证</a>

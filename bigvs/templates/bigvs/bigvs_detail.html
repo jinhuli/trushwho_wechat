@@ -1,4 +1,5 @@
 {% extends "base/base.html" %}
+{% load thumbnail %}
 
 {% block title %}
   {{ obj.name }}
@@ -65,12 +66,23 @@ a.weui_grid {
   background-color: #FFF;
   padding-left: 10px;
 }
+.headimg {
+  border: 5px solid #FFF;
+  width: 44px;
+  height: 44px;
+  line-height: 44px;
+  margin: auto;
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="v_head">
-	<p><img src="/static/images/bv.png" alt="icon" style="width: 54px;"></p>
+    {% if obj.headimg %}
+        <img src="{{ obj.headimg|thumbnail_url:'avatar' }}"/>
+    {% else %}
+        <div class="headimg">{{ obj.initials|slice:":2" }}</div>
+    {% endif %}
 	<p class="name">{{ obj.name }}</p>
 	<p class="brief">{{ obj.brief|default_if_none:"" }}</p>
 	<div class="weui_grids">

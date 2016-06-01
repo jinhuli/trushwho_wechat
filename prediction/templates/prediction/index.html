@@ -61,6 +61,9 @@
   .cell_title span {
     width: 48px;
   }
+  a:focus, a:hover {
+    text-decoration: none;
+  }
   #main{
     width: 280px;
     height: 280px;
@@ -138,6 +141,7 @@
             }
         });
         $('.subscribe').click(function(){
+        	$(".help").popover('hide');
         	$(".subscribe_panel").show();
         	$("#mask").show();
         });

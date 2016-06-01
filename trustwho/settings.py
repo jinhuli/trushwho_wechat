@@ -33,7 +33,7 @@ SECRET_KEY = '5o6bn-lljhwz#m6od%8y5ipq#@wi_7_81165j0*-kzbd85@(oa'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-WECHATDEBUG = False
+WECHATDEBUG = True
 
 
 ALLOWED_HOSTS = []
@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'djcelery',
     'django_extensions',
     'flattext',
+    'easy_thumbnails',
     'common',
     'bigvs',
     'articles',
@@ -75,7 +76,6 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     'common.middleware.RecordEventMiddleWare',
     'common.middleware.WechatUserMiddleWare',
-    
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 INTERNAL_IPS = ('127.0.0.1',)
@@ -156,7 +156,7 @@ CACHES = {
 REDIS_TIMEOUT = 7 * 24 * 60 * 60
 CUBES_REDIS_TIMEOUT = 60 * 60
 NEVER_REDIS_TIMEOUT = 365 * 24 * 60 * 60
-SITE_REDIS_TIMEOUT = 60
+SITE_REDIS_TIMEOUT = 1
 
 
 # Internationalization
@@ -181,6 +181,8 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     get_abs('static'),
 )
+MEDIA_URL = '/files/'
+MEDIA_ROOT = BASE_DIR + '/data/development/files/'
 
 LOGGING = {
     'version': 1,
@@ -255,8 +257,8 @@ SUIT_CONFIG = {
 }
 
 # 微信公众号配置
-WECHAT_APPID = 'wx9eba0081228e07ec'
-WECHAT_APPSECRET = 'ac665808a72856f499e11c37a293dce0'
+WECHAT_APPID = 'wx3e332c31920ab2da'
+WECHAT_APPSECRET = '8313b9bda1d9bf2d7eee9ea0668e4a9d'
 WECHAT_TOKEN = 'B0quTechWebchat'
 
 # djcelery+broker配置
@@ -278,3 +280,9 @@ CELERY_TIMEZONE = TIME_ZONE
 SHELL_PLUS_PRE_IMPORTS = (
     ('articles.tasks', 'build_score'),
 )
+
+THUMBNAIL_ALIASES = {
+    '': {
+        'avatar': {'size': (54, 54), 'crop': True},
+    },
+}

@@ -8,6 +8,7 @@ from django.core.cache import cache
 from django.db.models import Count
 from django.core.paginator import Paginator
 from django.conf import settings
+from easy_thumbnails.files import get_thumbnailer
 from wechat.models import Comment
 from articles.models import Judgement
 from bigvs.models import BigVs
@@ -62,8 +63,16 @@ def cache_options(object_ids, openid):
 
 
 def cache_bigv(v_ids):
-    bigvs = BigVs.objects.filter(v_id__in=v_ids).values('v_id', 'name', 'words_weight')
+    bigvs = BigVs.objects.filter(v_id__in=v_ids).only('v_id', 'name', 'words_weight', 'headimg', 'initials')
     res = {}
-    map(lambda x: res.update({x['v_id']: x}), bigvs)
+    for b in bigvs:
+        bd = {}
+        bd.update({'name': b.name})
+        bd.update({'words_weight': b.words_weight})
+        bd.update({'initials': b.initials})
+        if b.headimg:
+            bd.update({'headimg': get_thumbnailer(b.headimg)['avatar'].url})
+        res.update({b.v_id: bd})
+        
     cache_set(BIGVS_ALL_KEY, res)
 
