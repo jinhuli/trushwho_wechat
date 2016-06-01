@@ -28,9 +28,10 @@ def build_words_weight():
             if d['is_correct'] == 1:
                 c = d['count']
             sum_c += d['count']
-#         w = int(round(c * 1.0 / sum_c))
-#         c = w * 200
-#         sum_c = 200
+        if sum_c:
+            w = c * 1.0 / sum_c
+            c = w * 200
+            sum_c = 200
         data = Judgement.objects.filter(article__bigv=b, judge__isnull=False).values('judge').annotate(count=Count('judge')).order_by('judge')
         for d in data:
             if d['judge'] == 'right':
@@ -40,7 +41,7 @@ def build_words_weight():
             w = int(round(c * 1.0 / sum_c * 100))
             b.words_weight = w
             b.save()
-        print b.name, c, sum_c, w
+            print b.name, c, sum_c, w
     pool = Pool(8)
     pool.map(_build, bigvs)
     pool.close()
