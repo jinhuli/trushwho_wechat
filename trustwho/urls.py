@@ -16,7 +16,7 @@ urlpatterns = [
     url(r'^subscribe/', include('subscribe.urls')),
     url(r'^prediction/', include('prediction.urls')),
     url(r'^user/', include('wechat.urls')),
-    url(r'^$', TemplateView.as_view(template_name='index.html')),
+    url(r'^$', openid_exempt(TemplateView.as_view(template_name='index.html'))),
 ]
 
 if settings.DEBUG:
