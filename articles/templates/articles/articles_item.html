@@ -81,7 +81,11 @@
         </div>
 	  </div>
 	</div>
-	<div class="post_form">
+</div>
+
+<div id="post_popup" class="weui-popup-container popup-bottom">
+  <div class="weui-popup-modal">
+    <div class="post_form">
 	   <form action="{% url 'comment_add' %}" method="post">
 	   {% csrf_token %}
 	   <input type="hidden" name="object_id" value="{{ obj.id }}">
@@ -90,13 +94,14 @@
 	   <div class="weui_cells_title"><span class="cancel">取消</span>发表评论<span class="submit">发送</span></div>
 	   <div class="weui_cells weui_cells_form">
 	       <div class="weui_cell">
-			  <div class="weui_cell_bd weui_cell_primary">
-			    <textarea class="weui_textarea" placeholder="说点什么吧！也许你就是下一个V！" rows="4" name="content" id="id_content"></textarea>
-			  </div>
-			</div>
+	          <div class="weui_cell_bd weui_cell_primary">
+	            <textarea class="weui_textarea" placeholder="说点什么吧！也许你就是下一个V！" rows="4" name="content" id="id_content"></textarea>
+	          </div>
+	        </div>
 	   </div>
 	   </form>
-    </div>
+	</div>
+  </div>
 </div>
 {% endblock %}
 
@@ -138,7 +143,8 @@
   color: #C8C8C8;
 }
 .post_form {
-  display: none;
+  display: block;
+  z-index: 102;
 }
 .post .weui_input {
   border: 1px solid #C8C8C8;
@@ -149,12 +155,11 @@
 }
 .post_form span.cancel {
   float: left;
+  color: #24A8F4;
 }
 .post_form span.submit {
   float: right;
-}
-.post {
-  z-index: 102;
+  color: #24A8F4;
 }
 .weui_textarea {
   color: #666;
@@ -180,6 +185,10 @@
   padding-left: 0;
   background-position: center right;
 }
+.weui-popup-container, .weui-popup-overlay {
+  height: 158px;
+  z-index: 1062;
+}
 </style>
 {% endblock %}
 
@@ -187,20 +196,15 @@
 <script type="text/javascript">
   $(document).ready(function(){
 	  $(".weui_input").focus(function(){
-		  $(".form_label").hide();
-		  $("#mask").show();
-		  $(".post_form").slideDown(function(){
-			  $("body").css({overflow:"hidden"});
-			  $("#id_content").focus();
-		  });
+		  $(".post").hide();
+		  $("#post_popup").popup();
+		  $("#mask_f").show();
+		  $("#id_content").focus();
 	  });
 	  $(".post_form .cancel").click(function(){
-		  $("#mask").hide();
-		  $(".post_form").slideUp(function(){
-			  $(".form_label").show();
-	          $("body").css({overflow:"auto"});
-		  });
-		  
+		  $.closePopup();
+		  $(".post").show();
+		  $("#mask_f").hide();
 	  });
 	  $(".post_form .submit").click(function(){
 		  if(!$("#id_content").val()){
@@ -209,7 +213,7 @@
 		  }
 		  $("form").submit();
 	  });
-	  $("#mask").click(function(){
+	  $("#mask_f").click(function(){
 		  $(".post_form .cancel").click();
 	  });
   });

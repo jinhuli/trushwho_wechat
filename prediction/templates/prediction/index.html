@@ -17,7 +17,7 @@
 <a href="javascript:;" class="weui_btn weui_btn_plain_primary subscribe">逃顶抄底</a>
 </div>
 <div class="subscribe_panel">
-<i class="weui_icon_clear"></i>
+<div class="x"></div>
 深套山顶，持币谷底，谁之过？贪婪
 的人性还是媒体导向？<br/>
 大盘走势，大v怎么看，订阅逃顶抄
@@ -73,19 +73,22 @@
     border-top: 1px solid #fff;
   }
   .actions {
-    width: 80px;
+    width: 60px;
     position: absolute;
     top: 10px;
     right: 10px;
-    }
+   }
+   .actions .weui_btn {
+     padding: 0;
+   }
   .subscribe_panel {
-    width: 80%;
+    width: 66%;
     position: fixed;
-    top: 60px;
-    left: 10%;
+    top: 94px;
+    left: 17%;
     z-index: 102;
     text-align: center;
-    padding: 30px;
+    padding: 30px 10px;
     background-color: #FFF;
     border-radius: 10px;
     display: none;
@@ -94,10 +97,16 @@
     width: 50%;
     margin-top: 50px;
   }
-  .subscribe_panel .weui_icon_clear {
+  .subscribe_panel .x {
     position: absolute;
-    right: -7px;
-    top: -13px;
+    right: -10px;
+    top: -10px;
+    width: 25px;
+    height: 25px;
+    background-image: url('/static/images/x.png');
+    background-size: 25px 25px;
+    display: inline-block;
+  
   }
 </style>
 {% endblock %}
@@ -141,19 +150,23 @@
             }
         });
         $('.subscribe').click(function(){
-        	$(".help").popover('hide');
         	$(".subscribe_panel").show();
         	$("#mask").show();
         });
-        $('.weui_icon_clear').click(function(){
+        $('.x').click(function(){
             $(".subscribe_panel").hide();
             $("#mask").hide();
         });
         $("#mask").click(function(){
-        	$('.weui_icon_clear').click();
+        	$('.x').click();
         });
         $(".help").click(function(){
         	$(this).popover();
+        	$("#mask_f").show();
+        });
+        $("#mask_f").click(function(){
+        	$(".help").click();
+        	$(this).hide();
         });
         $(function () { $("[data-toggle='popover']").popover(); });
         $('.subscribe_panel').on('click', '.sub', function(){
@@ -162,6 +175,7 @@
         			$(".sub").addClass('unsub');
                     $(".sub").text('取消订阅');
                     $(".sub").removeClass('sub');
+                    setTimeout("$('#mask').click()", 1000);
         		}else{
         			showMsg('错误', '订阅失败');
         		}
@@ -173,6 +187,7 @@
                     $(".unsub").addClass('sub');
                     $(".unsub").text('订阅');
                     $(".unsub").removeClass('unsub');
+                    setTimeout("$('#mask').click()", 1000);
                 }else{
                     showMsg('错误', '取消订阅失败');
                 }

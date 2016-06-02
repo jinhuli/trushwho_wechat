@@ -23,7 +23,7 @@
     		$.get("{% url 'article_judge' %}",{'id': id}, function(data){
     			$("#judgement").html(data);
     			$("#mask").show();
-    			$("body").css({overflow:"hidden"});
+    			$("html").css({"overflow-y":"hidden"});
     		});
     	});
     	showMsg = function(title, content){
@@ -68,6 +68,7 @@
     {% endblock %}
     <div id="judgement"></div>
     <div id="mask"></div>
+    <div id="mask_f"></div>
     <script>
 	var _hmt = _hmt || [];
 	(function() {

@@ -10,7 +10,7 @@
     <div class="weui_cell_bd weui_cell_primary">
         <div class="cell_title">
           {{ article.title|default_if_none:''|truncatechars:20 }}
-          <div class="cell_bottom">{{ article.publish_date|date:'y-m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
+          <div class="cell_bottom">{{ article.publish_date|date:'Y-m-d H:i' }} <div class='calendar'>{{ article.judgement_calendar|safe }}</div></div>
         </div>
         <div class="cell_desc">{{ article.content|markdown|striptags|truncatechars:80 }}</div>
         <div class="cell_bottom">来自{{ article.article_source }}
