@@ -117,7 +117,6 @@
   background-color: #fff;
   margin-bottom: 0px;
   padding: 10px 20px;
-
 }
 .detail .comment .weui_cell {
   padding: 0;
@@ -187,6 +186,7 @@
 }
 .weui-popup-container, .weui-popup-overlay {
   z-index: 1062;
+  height: 158px;
 }
 </style>
 {% endblock %}
@@ -194,6 +194,7 @@
 {% block js %}
 <script type="text/javascript">
   $(document).ready(function(){
+	  $('body').css('height', $('body').height());
 	  $(".weui_input").focus(function(){
 		  $(".post").hide();
 		  $("#post_popup").popup();
