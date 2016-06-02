@@ -210,7 +210,7 @@ $(document).ready(function(){
         curpage = 1;
         getpage(token, curpage);
         $("#id_token").val(token);
-        $("#search_input").AutoComplete({
+        /* $("#search_input").AutoComplete({
             'data': '{% url "article_jsondata_for_title" %}?token='+token+'&openid={{ openid }}',
             'width': 'auto',
             'ajaxDataType': 'json',
@@ -220,7 +220,7 @@ $(document).ready(function(){
                 $("form").submit();
             },
             'emphasis': false,
-        });
+        }); */
     });
     $(".nav a").click(function(){
     	hideHint();

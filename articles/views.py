@@ -5,7 +5,7 @@ from django.views.generic.detail import DetailView
 from django.contrib.contenttypes.models import ContentType
 from articles.models import ArticlePostedResults, Judgement
 from wechat.models import WechatUser_BigVs, WechatUser
-from common.views import JSONListView, JSONView
+from common.views import JSONListView, JSONView, WeChatView
 from articles.utils import cache_options, cache_bigv, CountPaginator
 from articles.forms import JudgementForm
 from common.utils import debug
@@ -13,7 +13,7 @@ from common.utils import debug
 import datetime
 
 
-class ArticleIndexView(TemplateView):
+class ArticleIndexView(WeChatView):
     template_name = 'articles/articles_index.html'
     
     

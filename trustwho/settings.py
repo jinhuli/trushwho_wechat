@@ -181,8 +181,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     get_abs('static'),
 )
-MEDIA_URL = '/files/'
-MEDIA_ROOT = BASE_DIR + '/data/development/files/'
+
 
 LOGGING = {
     'version': 1,
