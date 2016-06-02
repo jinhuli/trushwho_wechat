@@ -83,25 +83,21 @@
 	</div>
 </div>
 
-<div id="post_popup" class="weui-popup-container popup-bottom">
-  <div class="weui-popup-modal">
-    <div class="post_form">
-	   <form action="{% url 'comment_add' %}" method="post">
-	   {% csrf_token %}
-	   <input type="hidden" name="object_id" value="{{ obj.id }}">
-	   <input type="hidden" name="wechatuser" value="{{ request.wechatuser.id }}">
-	   <input type="hidden" name="content_type" value="{{ content_type }}">
-	   <div class="weui_cells_title"><span class="cancel">取消</span>发表评论<span class="submit">发送</span></div>
-	   <div class="weui_cells weui_cells_form">
-	       <div class="weui_cell">
-	          <div class="weui_cell_bd weui_cell_primary">
-	            <textarea class="weui_textarea" placeholder="说点什么吧！也许你就是下一个V！" rows="4" name="content" id="id_content"></textarea>
-	          </div>
-	        </div>
-	   </div>
-	   </form>
-	</div>
-  </div>
+<div class="post_form">
+   <form action="{% url 'comment_add' %}" method="post">
+   {% csrf_token %}
+   <input type="hidden" name="object_id" value="{{ obj.id }}">
+   <input type="hidden" name="wechatuser" value="{{ request.wechatuser.id }}">
+   <input type="hidden" name="content_type" value="{{ content_type }}">
+   <div class="weui_cells_title"><span class="cancel">取消</span>发表评论<span class="submit">发送</span></div>
+   <div class="weui_cells weui_cells_form">
+       <div class="weui_cell">
+          <div class="weui_cell_bd weui_cell_primary">
+            <textarea class="weui_textarea" placeholder="说点什么吧！也许你就是下一个V！" rows="4" name="content" id="id_content"></textarea>
+          </div>
+        </div>
+   </div>
+   </form>
 </div>
 {% endblock %}
 
@@ -135,15 +131,16 @@
   color: #919191;
   font-size: 14px;
 }
-.detail .post {
+.detail .post, .post_form {
   position: fixed;
   bottom: 0;
   width: 100%;
   color: #C8C8C8;
 }
 .post_form {
-  display: block;
-  z-index: 102;
+  display: none;
+  z-index: 1062;
+  height: 168px;
 }
 .post .weui_input {
   border: 1px solid #C8C8C8;
@@ -184,25 +181,24 @@
   padding-left: 0;
   background-position: center right;
 }
-.weui-popup-container, .weui-popup-overlay {
-  z-index: 1062;
-  height: 158px;
-}
 </style>
 {% endblock %}
 
 {% block js %}
 <script type="text/javascript">
   $(document).ready(function(){
-	  $('body').css('height', $('body').height());
 	  $(".weui_input").focus(function(){
 		  $(".post").hide();
-		  $("#post_popup").popup();
+	      //$(window).scrollTop($('body').height() - $(window).height() - $("#post_popup").height()); 
+		  
+		  $(".post_form").show();
 		  $("#mask_f").show();
 		  $("#id_content").focus();
+		  console.info($(window).scrollTop());
+		  console.info($(".post_form").height());
 	  });
 	  $(".post_form .cancel").click(function(){
-		  $.closePopup();
+		  $(".post_form").slideUp();
 		  $(".post").show();
 		  $("#mask_f").hide();
 	  });
