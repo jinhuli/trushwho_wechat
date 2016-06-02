@@ -189,7 +189,8 @@
   $(document).ready(function(){
 	  $(".weui_input").focus(function(){
 		  $(".post").hide();
-	      $(window).scrollTop($('body').height()); 
+	      $(window).scrollTop($('body').height() - $(window).height() - $(".post_form").height());
+		  
 		  $(".post_form").show();
 		  $("#mask_f").show();
 		  $("#id_content").focus();
