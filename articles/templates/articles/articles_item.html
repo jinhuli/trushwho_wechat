@@ -189,13 +189,10 @@
   $(document).ready(function(){
 	  $(".weui_input").focus(function(){
 		  $(".post").hide();
-	      //$(window).scrollTop($('body').height() - $(window).height() - $("#post_popup").height()); 
-		  
+	      $(window).scrollTop($('body').height()); 
 		  $(".post_form").show();
 		  $("#mask_f").show();
 		  $("#id_content").focus();
-		  console.info($(window).scrollTop());
-		  console.info($(".post_form").height());
 	  });
 	  $(".post_form .cancel").click(function(){
 		  $(".post_form").slideUp();
