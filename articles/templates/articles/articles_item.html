@@ -189,16 +189,16 @@
   $(document).ready(function(){
 	  $(".weui_input").focus(function(){
 		  $(".post").hide();
-	      $(window).scrollTop($('body').height() - $(window).height() - 168 - 46);
+	      $(window).scrollTop($('body').height() - $(window).height());
 		  
 		  $(".post_form").show();
-		  $("#mask_f").show();
+		  $("#mask").show();
 		  $("#id_content").focus();
 	  });
 	  $(".post_form .cancel").click(function(){
 		  $(".post_form").slideUp();
 		  $(".post").show();
-		  $("#mask_f").hide();
+		  $("#mask").hide();
 	  });
 	  $(".post_form .submit").click(function(){
 		  if(!$("#id_content").val()){
@@ -207,7 +207,7 @@
 		  }
 		  $("form").submit();
 	  });
-	  $("#mask_f").click(function(){
+	  $("#mask").click(function(){
 		  $(".post_form .cancel").click();
 	  });
   });

@@ -59,7 +59,7 @@ def count_comments_():
 @task
 def build_rank():
     st = time.time()
-    rank = Judgement.objects.values('wechatuser').annotate(count=Count('wechatuser')).order_by('wechatuser')
+    rank = Judgement.objects.filter(judge__isnull=False).values('wechatuser').annotate(count=Count('wechatuser')).order_by('wechatuser')
     rank = sorted(rank, cmp=cmp, key=lambda x: x['count'], reverse=True)
     num = len(rank)
     res = {}
