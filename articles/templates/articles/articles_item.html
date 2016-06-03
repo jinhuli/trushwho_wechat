@@ -12,15 +12,17 @@
   <div class="weui_cells">
 	<div class="weui_cell">
 	    <div class="weui_cell_hd">
+	    <a href="{% url 'bigvs_detail' obj.bigv_id %}">
 	        {% if obj.bigv.headimg %}
 		        <img src="{{ obj.bigv.headimg|thumbnail_url:'avatar' }}"/>
 		    {% else %}
 		        <div class="headimg">{{ obj.bigv.initials|slice:":2" }}</div>
 		    {% endif %}
+		</a>
 	    </div>
 	    <div class="weui_cell_bd weui_cell_primary">
 	        <div class="cell_title">
-	          {{ obj.bigv.name }}
+	          <a href="{% url 'bigvs_detail' obj.bigv_id %}">{{ obj.bigv.name }}</a>
 	          <span>{{ obj.bigv.words_weight|default:"待评" }}</span>
 	        </div>
 	        <div class="cell_bottom">{{ obj.publish_date|date:'Y-m-d H:i' }} <div class='calendar'>{{ obj.judgement_calendar|safe }}</div></div>
@@ -210,6 +212,10 @@
 	  $("#mask").click(function(){
 		  $(".post_form .cancel").click();
 	  });
+	  window.onbeforeunload = function(){
+        var href = window.location.href.split('#')[0];
+        history.replaceState('', '', href);
+    };
   });
 </script>
 {% endblock %}

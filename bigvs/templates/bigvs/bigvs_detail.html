@@ -204,7 +204,7 @@ a.weui_grid {
                 }
             });
         }
-        $(".weui_navbar_item").click(function(){
+        $(".weui_tab").on('click', ".weui_navbar_item", function(){
         	token = $(this).attr('href').split("#")[1];
         	if(token == 'introduction'){
         		loading = false;
@@ -230,8 +230,26 @@ a.weui_grid {
                 $(".weui_navbar").css({'position':'absolute'});
             }
         });
-        var referrer = document.referrer;
-        console.info(referrer);
+        window.onbeforeunload = function(){
+        	var href = window.location.href.split('#')[0];
+            var state = {
+                'token': token,
+                'page': curpage,
+            }
+            localStorage.setItem('list-data', $('.weui_tab').html());
+            history.replaceState(state, '', href + '#scrollTop=' + $(window).scrollTop());
+        };
+        if(history.state){
+            var html_data = localStorage.getItem('list-data');
+            var state = history.state;
+            curpage = state.page;
+            token = state.token;
+            $(".weui_tab").html(html_data);
+            var scrollTop=location.hash.replace('#scrollTop=','');
+            setTimeout(function(){  
+                $(window).scrollTop(scrollTop);
+            }, 300);
+        }
     });
     </script>
 {% endblock %}

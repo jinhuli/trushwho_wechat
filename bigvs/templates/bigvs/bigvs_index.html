@@ -82,18 +82,18 @@ $(document).ready(function(){
 	var curpage = 1; 
 	var loading = false;  //状态标记
 	var token = 'all';
+	var q = '{{ q }}';
 	var settings = {'all':{'page': 1, 'loaded': false}
                   , 'mine': {'page': 1, 'loaded': false}}
 	if('{{ q }}'){
         $("#search_text").click();
     }
 	
-	
 	function getpage(token, page){
 		$.ajax({
 		    type: "GET",
 		    url: "{% url 'bigvs_index' %}" + token +"/",
-		    data: {'page': page, 'q': '{{ q }}', 'openid': '{{ request.wechatuser.openid }}'},
+		    data: {'page': page, 'q': q, 'openid': '{{ request.wechatuser.openid }}'},
 			beforeSend: function(){
               $(".weui-infinite-scroll").show();
             },
@@ -114,7 +114,7 @@ $(document).ready(function(){
 		    }
 		});
   	}
-	$(".weui_navbar_item").click(function(){
+	$(".weui_tab").on('click', ".weui_navbar_item", function(){
 		$('.v').hide();
 		token = $(this).attr('href').split("#")[1];
 		$("#"+token+">.weui_cells").html('');
@@ -134,13 +134,36 @@ $(document).ready(function(){
             'emphasis': false,
         });
 	});
-	$(".weui_bar_item_on").click();
     $(document.body).infinite().on("infinite", function() {
       if(loading) return;
       loading = true;
       getpage(token, ++settings[token]['page']);
     });
     
+    window.onbeforeunload = function(){
+        var href = window.location.href.split('#')[0];
+        var state = {
+            'token': token,
+            'page': curpage,
+            'q': q,
+        }
+        localStorage.setItem('list-data', $('.weui_tab').html());
+        history.replaceState(state, '', href + '#scrollTop=' + $(window).scrollTop());
+    };
+    if(history.state){
+        var html_data = localStorage.getItem('list-data');
+        var state = history.state;
+        curpage = state.page;
+        token = state.token;
+        q = state.q;
+        $(".weui_tab").html(html_data);
+        var scrollTop=location.hash.replace('#scrollTop=','');
+        setTimeout(function(){  
+            $(window).scrollTop(scrollTop);
+        }, 300);
+    }else{
+        $(".weui_bar_item_on").click();
+    }
 });
 {% endwith %}
 </script>

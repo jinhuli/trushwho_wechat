@@ -154,6 +154,7 @@ $(document).ready(function(){
     if('{{ q }}'){
     	$("#search_text").click();
     }
+    
     function getpage(token, page){
     	data['page'] = page;
         if(token == 'mine'){
@@ -194,7 +195,7 @@ $(document).ready(function(){
     function hideHint(){
     	$(".empty_hint").hide();
     }
-    $(".weui_navbar_item").click(function(){
+    $(".weui_tab").on('click', ".weui_navbar_item", function(){
     	hideHint();
         token = $(this).attr('href').split("#")[1];
         if(token == 'judge'){
@@ -222,7 +223,7 @@ $(document).ready(function(){
             'emphasis': false,
         }); */
     });
-    $(".nav a").click(function(){
+    $(".weui_tab").on('click', ".nav a", function(){
     	hideHint();
     	$(".nav a").removeClass('cur');
     	jtype = $(this).attr('class')
@@ -232,7 +233,7 @@ $(document).ready(function(){
     	curpage = 1;
     	getpage(token, curpage);
     });
-    $(".weui_cells").on('click', 'a.del', function(){
+    $(".weui_tab").on('click', 'a.del', function(){
     	var item = $(this);
         var id = item.attr('title');
     	$.confirm("确定要删除吗？", function() {
@@ -245,13 +246,37 @@ $(document).ready(function(){
 
 		});
     });
-    $(".weui_bar_item_on").click();
     $(document.body).infinite().on("infinite", function() {
       if(loading) return;
       loading = true;
       getpage(token, ++curpage);
     });
-    
+    window.onbeforeunload = function(){
+    	var href = window.location.href.split('#')[0];
+        var state = {
+        	'token': token,
+            'page': curpage,
+            'jtype': jtype,
+            'data': data,
+        }
+        localStorage.setItem('list-data', $('.weui_tab').html());
+        history.replaceState(state, '', href + '#scrollTop=' + $(window).scrollTop());
+    };
+    if(history.state){
+        var html_data = localStorage.getItem('list-data');
+        var state = history.state;
+        curpage = state.page;
+        token = state.token;
+        jtype = state.jtype;
+        data = state.data;
+        $(".weui_tab").html(html_data);
+        var scrollTop=location.hash.replace('#scrollTop=','');
+        setTimeout(function(){  
+            $(window).scrollTop(scrollTop);
+        }, 300);
+    }else{
+        $(".weui_bar_item_on").click();
+    }
 });
 {% endwith %}
 </script>
