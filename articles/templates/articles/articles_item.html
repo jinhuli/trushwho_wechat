@@ -212,10 +212,6 @@
 	  $("#mask").click(function(){
 		  $(".post_form .cancel").click();
 	  });
-	  window.onbeforeunload = function(){
-        var href = window.location.href.split('#')[0];
-        history.replaceState('', '', href);
-    };
   });
 </script>
 {% endblock %}
