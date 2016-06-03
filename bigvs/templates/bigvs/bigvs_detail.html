@@ -45,9 +45,6 @@
   height: 40px;
   padding: 0;
 }
-.weui_grid:active {
-  background-color: none;
-}
 a.weui_grid {
   color: #FFF;
   background-color: 
@@ -209,6 +206,11 @@ a.weui_grid {
         }
         $(".weui_navbar_item").click(function(){
         	token = $(this).attr('href').split("#")[1];
+        	if(token == 'introduction'){
+        		loading = false;
+                $(".weui-infinite-scroll").hide();
+        		return;
+        	}
         	$("#"+token+">.weui_cells").html('');
             curpage = 1;
             getpage(token, curpage);
